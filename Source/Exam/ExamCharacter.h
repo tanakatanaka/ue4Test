@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../Public/ExamAttributeSet.h"
 #include "ExamCharacter.generated.h"
+
 
 UCLASS(config=Game)
 class AExamCharacter : public ACharacter
@@ -63,17 +65,26 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
 
+	/** List of attributes modified by the ability system */
+	UPROPERTY()
+	UExamAttributeSet* AttributeSet;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	//UFUNCTION(BlueprintCallable)
-	//virtual float GetHealth() const;
+	UFUNCTION(BlueprintCallable)
+	virtual float GetHealth() const;
 
-	//UFUNCTION(BlueprintCallable)
-	//virtual float GetMaxHealth() const;
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMoveSpeed() const;
+
+	
 
 
 };

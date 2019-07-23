@@ -132,3 +132,23 @@ void AExamCharacter::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 	}
 }
+
+float AExamCharacter::GetHealth() const
+{
+	return AttributeSet->Helth;
+}
+
+float AExamCharacter::GetMaxHealth() const
+{
+	return AttributeSet->MaxHealth;
+}
+
+float AExamCharacter::GetMoveSpeed() const
+{
+	return AttributeSet->MoveSpeed;
+}
+
+
+
+
+

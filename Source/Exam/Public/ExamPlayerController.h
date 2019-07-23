@@ -15,4 +15,10 @@ class EXAM_API AExamPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	AExamPlayerController();
+	virtual void BeginPlay() override;
+
+	/** Loads inventory from save game on game instance, this will replace arrays */
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	bool LoadInventory();
+
 };
