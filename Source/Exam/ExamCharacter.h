@@ -69,6 +69,9 @@ protected:
 	UPROPERTY()
 	UExamAttributeSet* AttributeSet;
 
+	/* Called every frame */
+	virtual void Tick(float DeltaSeconds) override;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

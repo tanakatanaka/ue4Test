@@ -148,7 +148,40 @@ float AExamCharacter::GetMoveSpeed() const
 	return AttributeSet->MoveSpeed;
 }
 
+void AExamCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+/*
+	if (Controller && Controller->IsLocalController())
+	{
+		ASUsableActor* Usable = GetUsableInView();
 
+		// End Focus
+		if (FocusedUsableActor != Usable)
+		{
+			if (FocusedUsableActor)
+			{
+				FocusedUsableActor->OnEndFocus();
+			}
+
+			bHasNewFocus = true;
+		}
+
+		// Assign new Focus
+		FocusedUsableActor = Usable;
+
+		// Start Focus.
+		if (Usable)
+		{
+			if (bHasNewFocus)
+			{
+				Usable->OnBeginFocus();
+				bHasNewFocus = false;
+			}
+		}
+	}
+*/
+}
 
 
 

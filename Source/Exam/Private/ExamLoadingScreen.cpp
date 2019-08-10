@@ -4,7 +4,7 @@
 #include "../Public/ExamLoadingScreen.h"
 #include "SlateBasics.h"
 #include "SlateExtras.h"
-#include "Runtime/MoviePlayer/Public/MoviePlayer.h"
+
 
 class FExamLoadingScreenModule : public IExamLoadingScreenModule
 {
@@ -12,12 +12,13 @@ public:
 	virtual void StartupModule() override
 	{
 		// Force load for cooker reference
-		LoadObject<UObject>(nullptr, TEXT("/Game/UI/T_ActionRPG_TransparentLogo.T_ActionRPG_TransparentLogo"));
-
+		//LoadObject<UObject>(nullptr, TEXT("/Game/UI/T_ActionRPG_TransparentLogo.T_ActionRPG_TransparentLogo"));
+		/*
 		if (IsMoviePlayerEnabled())
 		{
 			CreateScreen();
 		}
+		*/
 	}
 
 	virtual bool IsGameModule() const override
