@@ -1,6 +1,8 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "ExamCharacter.h"
+#include "Public/ExamWeapon.h"
+#include "Public/CarryObjectComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -67,6 +69,14 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("TurnRate", this, &AExamCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AExamCharacter::LookUpAtRate);
+
+	// Weapons
+	PlayerInputComponent->BindAction("Targeting", IE_Pressed, this, &AExamCharacter::OnStartTargeting);
+	PlayerInputComponent->BindAction("Targeting", IE_Released, this, &AExamCharacter::OnEndTargeting);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AExamCharacter::OnStartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AExamCharacter::OnStopFire);
+
 
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &AExamCharacter::TouchStarted);
@@ -135,7 +145,7 @@ void AExamCharacter::MoveRight(float Value)
 
 float AExamCharacter::GetHealth() const
 {
-	return AttributeSet->Helth;
+	return AttributeSet->Health;
 }
 
 float AExamCharacter::GetMaxHealth() const
@@ -148,40 +158,83 @@ float AExamCharacter::GetMoveSpeed() const
 	return AttributeSet->MoveSpeed;
 }
 
-void AExamCharacter::Tick(float DeltaTime)
+void AExamCharacter::OnStartTargeting()
 {
-	Super::Tick(DeltaTime);
-/*
-	if (Controller && Controller->IsLocalController())
+	if (CarriedObjectComp->GetIsCarryingActor())
 	{
-		ASUsableActor* Usable = GetUsableInView();
-
-		// End Focus
-		if (FocusedUsableActor != Usable)
-		{
-			if (FocusedUsableActor)
-			{
-				FocusedUsableActor->OnEndFocus();
-			}
-
-			bHasNewFocus = true;
-		}
-
-		// Assign new Focus
-		FocusedUsableActor = Usable;
-
-		// Start Focus.
-		if (Usable)
-		{
-			if (bHasNewFocus)
-			{
-				Usable->OnBeginFocus();
-				bHasNewFocus = false;
-			}
-		}
+		CarriedObjectComp->Drop();
 	}
-*/
+
+	SetTargeting(true);
+}
+
+
+void AExamCharacter::OnEndTargeting()
+{
+	SetTargeting(false);
 }
 
 
 
+void AExamCharacter::OnStartFire()
+{
+	/*
+	if (IsSprinting())
+	{
+		SetSprinting(false);
+	}
+
+	if (CarriedObjectComp->GetIsCarryingActor())
+	{
+		StopWeaponFire();
+
+		CarriedObjectComp->Throw();
+		return;
+	}
+	*/
+	StartFire();
+}
+
+void AExamCharacter::OnStopFire()
+{
+	StopFire();
+}
+
+void AExamCharacter::StartFire()
+{
+	if (!AttributeSet->bWantsToFire)
+	{
+		AttributeSet->bWantsToFire = true;
+		if (AttributeSet->CurrentWeapon)
+		{
+			AttributeSet->CurrentWeapon->StartFire();
+		}
+	}
+}
+
+void AExamCharacter::StopFire()
+{
+	if (AttributeSet->bWantsToFire)
+	{
+		AttributeSet->bWantsToFire = false;
+		if (AttributeSet->CurrentWeapon)
+		{
+			AttributeSet->CurrentWeapon->StopFire();
+		}
+	}
+}
+
+void AExamCharacter::SetTargeting(bool NewTargeting)
+{
+	bIsTargeting = NewTargeting;
+
+	if (Role < ROLE_Authority)
+	{
+		//ServerSetTargeting(NewTargeting);
+	}
+}
+
+bool AExamCharacter::CanReload() const
+{
+	return AttributeSet->IsAlive();
+}

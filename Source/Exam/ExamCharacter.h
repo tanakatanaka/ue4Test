@@ -7,6 +7,7 @@
 #include "../Public/ExamAttributeSet.h"
 #include "ExamCharacter.generated.h"
 
+class UCarryObjectComponent;
 
 UCLASS(config=Game)
 class AExamCharacter : public ACharacter
@@ -61,16 +62,20 @@ protected:
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
 protected:
-	// APawn interface
+
+	/* Called every frame */
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// End of APawn interface
 
 	/** List of attributes modified by the ability system */
 	UPROPERTY()
 	UExamAttributeSet* AttributeSet;
 
-	/* Called every frame */
-	virtual void Tick(float DeltaSeconds) override;
+
+	UPROPERTY(Transient, Replicated)
+	bool bIsTargeting;
+
+	void SetTargeting(bool NewTargeting);
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -86,9 +91,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMoveSpeed() const;
-
 	
+	bool CanFire() const;
+	bool CanReload() const;
 
+	void OnStartFire();
+	void OnStopFire();
+	void StartFire();
+	void StopFire();
+	void OnStartTargeting();
+	void OnEndTargeting();
+
+	class UCarryObjectComponent* CarriedObjectComp;
+
+private:
+	
 
 };
 

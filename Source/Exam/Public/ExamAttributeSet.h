@@ -6,6 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "ExamAttributeSet.generated.h"
 
+class AExamWeapon;
+
 /**
  * 
  */
@@ -17,8 +19,10 @@ public:
 	UExamAttributeSet();
 	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
 
+	bool IsAlive();
+
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	float Helth;
+	float Health;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	float MaxHealth;
@@ -36,4 +40,8 @@ public:
 	float Damage;
 
 	void AdjustAttributeForMaxChange();
+
+	bool bWantsToFire;
+
+	class AExamWeapon* CurrentWeapon;
 };
