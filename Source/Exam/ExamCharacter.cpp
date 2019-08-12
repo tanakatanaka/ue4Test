@@ -238,3 +238,17 @@ bool AExamCharacter::CanReload() const
 {
 	return AttributeSet->IsAlive();
 }
+
+void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	/*
+		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+		DOREPLIFETIME(ASWeapon, MyPawn);
+
+		DOREPLIFETIME_CONDITION(ASWeapon, CurrentAmmo, COND_OwnerOnly);
+		DOREPLIFETIME_CONDITION(ASWeapon, CurrentAmmoInClip, COND_OwnerOnly);
+		DOREPLIFETIME_CONDITION(ASWeapon, BurstCounter, COND_SkipOwner);
+		DOREPLIFETIME_CONDITION(ASWeapon, bPendingReload, COND_SkipOwner);
+	*/
+}
