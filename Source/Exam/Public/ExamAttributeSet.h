@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ExamTypes.h"
 #include "UObject/NoExportTypes.h"
 #include "ExamAttributeSet.generated.h"
 
@@ -42,11 +43,24 @@ public:
 
 	void AdjustAttributeForMaxChange();
 	void SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
-
+	FName GetInventoryAttachPoint(EInventorySlot Slot) const;
 
 	bool bIsEquipped;
 	bool bWantsToFire;
 
 	class AExamWeapon* PreviousWeapon;
 	class AExamWeapon* CurrentWeapon;
+
+private:
+	/* Attachpoint for active weapon/item in hands */
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName WeaponAttachPoint;
+
+	/* Attachpoint for items carried on the belt/pelvis. */
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName PelvisAttachPoint;
+
+	/* Attachpoint for primary weapons */
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName SpineAttachPoint;
 };

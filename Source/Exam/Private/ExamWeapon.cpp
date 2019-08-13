@@ -115,9 +115,32 @@ void AExamWeapon::SetOwningPawn(AExamCharacter* NewOwner)
 	}
 }
 
+void AExamWeapon::OnUnEquip()
+{
+	bIsEquipped = false;
+	StopFire();
+
+	if (bPendingEquip)
+	{
+		StopWeaponAnimation(EquipAnim);
+		bPendingEquip = false;
+
+		GetWorldTimerManager().ClearTimer(EquipFinishedTimerHandle);
+	}
+	if (bPendingReload)
+	{
+		StopWeaponAnimation(ReloadAnim);
+		bPendingReload = false;
+
+		GetWorldTimerManager().ClearTimer(TimerHandle_ReloadWeapon);
+	}
+
+	DetermineWeaponState();
+}
 
 void AExamWeapon::OnEquip(bool bPlayAnimation)
-{
+{	
+
 	bPendingEquip = true;
 	DetermineWeaponState();
 
@@ -132,7 +155,7 @@ void AExamWeapon::OnEquip(bool bPlayAnimation)
 		EquipStartedTime = GetWorld()->TimeSeconds;
 		EquipDuration = Duration;
 
-		GetWorldTimerManager().SetTimer(EquipFinishedTimerHandle, this, &ASWeapon::OnEquipFinished, Duration, false);
+		GetWorldTimerManager().SetTimer(EquipFinishedTimerHandle, this, &AExamWeapon::OnEquipFinished, Duration, false);
 	}
 	else
 	{
@@ -145,7 +168,6 @@ void AExamWeapon::OnEquip(bool bPlayAnimation)
 		PlayWeaponSound(EquipSound);
 	}
 }
-
 
 void AExamWeapon::SetWeaponState(EWeaponState NewState)
 {
@@ -408,37 +430,6 @@ void AExamWeapon::StartReload(bool bFromReplication)
 	}
 }
 
-void AExamWeapon::OnEquip(bool bPlayAnimation)
-{
-	bPendingEquip = true;
-	DetermineWeaponState();
-
-	if (bPlayAnimation)
-	{
-		float Duration = PlayWeaponAnimation(EquipAnim);
-		if (Duration <= 0.0f)
-		{
-			// Failsafe in case animation is missing
-			Duration = NoEquipAnimDuration;
-		}
-		EquipStartedTime = GetWorld()->TimeSeconds;
-		EquipDuration = Duration;
-
-		GetWorldTimerManager().SetTimer(EquipFinishedTimerHandle, this, &AExamWeapon::OnEquipFinished, Duration, false);
-	}
-	else
-	{
-		/* Immediately finish equipping */
-		OnEquipFinished();
-	}
-
-	if (MyPawn && MyPawn->IsLocallyControlled())
-	{
-		PlayWeaponSound(EquipSound);
-	}
-}
-
-
 void AExamWeapon::AttachMeshToPawn(EInventorySlot Slot)
 {
 	if (MyPawn)
@@ -473,4 +464,10 @@ void AExamWeapon::OnEquipFinished()
 			StartReload();
 		}
 	}
+}
+
+void AExamWeapon::DetachMeshFromPawn()
+{
+	Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	Mesh->SetHiddenInGame(true);
 }

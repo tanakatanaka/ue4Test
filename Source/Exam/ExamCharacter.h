@@ -24,6 +24,8 @@ class AExamCharacter : public ACharacter
 public:
 	AExamCharacter();
 
+	void SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon = nullptr);
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -31,6 +33,8 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	FName GetInventoryAttachPoint(EInventorySlot Slot) const;
 
 protected:
 
@@ -70,6 +74,8 @@ protected:
 	/** List of attributes modified by the ability system */
 	UPROPERTY()
 	UExamAttributeSet* AttributeSet;
+
+	virtual void PawnClientRestart() override;
 
 
 	UPROPERTY(Transient, Replicated)

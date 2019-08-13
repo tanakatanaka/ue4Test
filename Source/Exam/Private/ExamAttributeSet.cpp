@@ -16,6 +16,12 @@ UExamAttributeSet::UExamAttributeSet()
 	bIsEquipped = false;
 	bWantsToFire = false;
 
+	/* Names as specified in the character skeleton */
+	WeaponAttachPoint = TEXT("WeaponSocket");
+	PelvisAttachPoint = TEXT("PelvisSocket");
+	SpineAttachPoint = TEXT("SpineSocket");
+
+
 }
 
 bool UExamAttributeSet::IsAlive()
@@ -63,4 +69,21 @@ void UExamAttributeSet::SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapo
 
 	/* NOTE: If you don't have an equip animation w/ animnotify to swap the meshes halfway through, then uncomment this to immediately swap instead */
 	//SwapToNewWeaponMesh();
+}
+
+FName UExamAttributeSet::GetInventoryAttachPoint(EInventorySlot Slot) const
+{
+	/* Return the socket name for the specified storage slot */
+	switch (Slot)
+	{
+	case EInventorySlot::Hands:
+		return WeaponAttachPoint;
+	case EInventorySlot::Primary:
+		return SpineAttachPoint;
+	case EInventorySlot::Secondary:
+		return PelvisAttachPoint;
+	default:
+		// Not implemented.
+		return "";
+	}
 }

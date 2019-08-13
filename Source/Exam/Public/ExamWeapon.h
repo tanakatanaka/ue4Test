@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ExamTypes.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "ExamWeapon.generated.h"
 
@@ -86,6 +87,8 @@ protected:
 	
 	virtual void OnEquipFinished();
 
+	void DetachMeshFromPawn();
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
@@ -93,6 +96,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	USoundCue* FireSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	USoundCue* EquipSound;
 
 	UPROPERTY(EditDefaultsOnly)
 	UParticleSystem* MuzzleFX;
@@ -129,6 +135,7 @@ private:
 	bool bPlayingFireAnim;
 
 	EWeaponState CurrentState;
+	FTimerHandle TimerHandle_ReloadWeapon;
 	FTimerHandle TimerHandle_HandleFiring;
 	FTimerHandle EquipFinishedTimerHandle;
 

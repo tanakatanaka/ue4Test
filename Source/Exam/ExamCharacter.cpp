@@ -146,6 +146,52 @@ void AExamCharacter::MoveRight(float Value)
 	}
 }
 
+void AExamCharacter::PawnClientRestart()
+{
+	Super::PawnClientRestart();
+
+	SetCurrentWeapon(AttributeSet->CurrentWeapon);
+}
+
+void AExamCharacter::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon)
+{
+	/* Maintain a reference for visual weapon swapping */
+	AttributeSet->PreviousWeapon = LastWeapon;
+
+	AExamWeapon* LocalLastWeapon = nullptr;
+	if (LastWeapon)
+	{
+		LocalLastWeapon = LastWeapon;
+	}
+	else if (NewWeapon != AttributeSet->CurrentWeapon)
+	{
+		LocalLastWeapon = AttributeSet->CurrentWeapon;
+	}
+
+	// UnEquip the current
+	bool bHasPreviousWeapon = false;
+	if (LocalLastWeapon)
+	{
+		LocalLastWeapon->OnUnEquip();
+		bHasPreviousWeapon = true;
+	}
+
+	AttributeSet->CurrentWeapon = NewWeapon;
+
+	if (NewWeapon)
+	{
+		NewWeapon->SetOwningPawn(this);
+		/* Only play equip animation when we already hold an item in hands */
+		NewWeapon->OnEquip(bHasPreviousWeapon);
+	}
+
+	/* NOTE: If you don't have an equip animation w/ animnotify to swap the meshes halfway through, then uncomment this to immediately swap instead */
+	//SwapToNewWeaponMesh();
+}
+
+
+
+
 float AExamCharacter::GetHealth() const
 {
 	return AttributeSet->Health;
@@ -284,4 +330,9 @@ void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 		DOREPLIFETIME_CONDITION(ASWeapon, BurstCounter, COND_SkipOwner);
 		DOREPLIFETIME_CONDITION(ASWeapon, bPendingReload, COND_SkipOwner);
 	*/
+}
+
+FName AExamCharacter::GetInventoryAttachPoint(EInventorySlot Slot) const
+{
+	return AttributeSet->GetInventoryAttachPoint(Slot);
 }
