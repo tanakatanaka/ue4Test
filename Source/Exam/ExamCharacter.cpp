@@ -45,8 +45,11 @@ AExamCharacter::AExamCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
+	
+	CarriedObjectComp = CreateDefaultSubobject<UCarryObjectComponent>(TEXT("CarriedObjectComp"));
+	CarriedObjectComp->SetupAttachment(GetRootComponent());
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,6 +186,7 @@ void AExamCharacter::OnStartFire()
 	{
 		SetSprinting(false);
 	}
+	*/
 
 	if (CarriedObjectComp->GetIsCarryingActor())
 	{
@@ -191,7 +195,7 @@ void AExamCharacter::OnStartFire()
 		CarriedObjectComp->Throw();
 		return;
 	}
-	*/
+	
 	StartFire();
 }
 
@@ -202,7 +206,7 @@ void AExamCharacter::OnStopFire()
 
 void AExamCharacter::StartFire()
 {
-	if (!AttributeSet->bWantsToFire)
+	if (false == AttributeSet->bWantsToFire)
 	{
 		AttributeSet->bWantsToFire = true;
 		if (AttributeSet->CurrentWeapon)
@@ -238,6 +242,35 @@ bool AExamCharacter::CanReload() const
 {
 	return AttributeSet->IsAlive();
 }
+
+void AExamCharacter::StopWeaponFire()
+{
+	if (AttributeSet->bWantsToFire)
+	{
+		AttributeSet->bWantsToFire = false;
+		if (AttributeSet->CurrentWeapon)
+		{
+			AttributeSet->CurrentWeapon->StopFire();
+		}
+	}
+}
+
+UStaticMeshComponent* UCarryObjectComponent::GetCarriedMeshComp()
+{
+	USceneComponent* ChildComp = GetChildComponent(0);
+	if (ChildComp)
+	{
+		AActor* OwningActor = ChildComp->GetOwner();
+		if (OwningActor)
+		{
+			return Cast<UStaticMeshComponent>(OwningActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		}
+	}
+
+	return nullptr;
+}
+
+
 
 void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

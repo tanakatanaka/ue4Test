@@ -42,6 +42,40 @@ AActor* UCarryObjectComponent::GetCarriedActor()
 	return nullptr;
 }
 
+
+void UCarryObjectComponent::Throw()
+{
+	if (!GetIsCarryingActor())
+		return;
+	/*
+	if (GetOwner()->Role < ROLE_Authority)
+	{
+		ServerThrow();
+		return;
+	}
+	*/
+	/* Grab a reference to the MeshComp before dropping the object */
+	UStaticMeshComponent* MeshComp = GetCarriedMeshComp();
+	if (MeshComp)
+	{
+		/* Detach and re-enable collision */
+		OnDropMulticast();
+
+		APawn* OwningPawn = Cast<APawn>(GetOwner());
+		if (OwningPawn)
+		{
+			/* Re-map uint8 to 360 degrees */
+			const float PawnViewPitch = (OwningPawn->RemoteViewPitch / 255.f)*360.f;
+
+			FRotator NewRotation = GetComponentRotation();
+			NewRotation.Pitch = PawnViewPitch;
+
+			/* Apply physics impulse, ignores mass */
+			MeshComp->AddImpulse(NewRotation.Vector() * 1000, NAME_None, true);
+		}
+	}
+}
+
 void UCarryObjectComponent::OnDropMulticast_Implementation()
 {
 #if 0

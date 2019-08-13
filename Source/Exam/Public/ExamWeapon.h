@@ -28,9 +28,14 @@ class EXAM_API AExamWeapon : public AActor
 
 public:
 
+	virtual void OnUnEquip();
+	void OnEquip(bool bPlayAnimation);
+
 	void StartFire();
 	void StopFire();
-	
+	void SetOwningPawn(AExamCharacter* NewOwner);
+	void AttachMeshToPawn(EInventorySlot Slot = EInventorySlot::Hands);
+
 protected:
 
 	AExamWeapon(const FObjectInitializer& ObjectInitializer);
@@ -49,6 +54,9 @@ protected:
 	USkeletalMeshComponent* Mesh;
 
 	UAudioComponent* PlayWeaponSound(USoundCue* SoundToPlay);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	float NoEquipAnimDuration;
 
 	float PlayWeaponAnimation(UAnimMontage* Animation, float InPlayRate = 1.f, FName StartSectionName = NAME_None);
 
@@ -76,6 +84,8 @@ protected:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_Reload)
 	bool bPendingReload;
 	
+	virtual void OnEquipFinished();
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
@@ -86,6 +96,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UParticleSystem* MuzzleFX;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* EquipAnim;
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FireAnim;
@@ -123,7 +136,6 @@ private:
 	float ShotsPerMinute;
 
 	virtual void StartReload(bool bFromReplication = false);
-
 	virtual void StopSimulateReload();
 
 };

@@ -7,6 +7,7 @@
 #include "ExamAttributeSet.generated.h"
 
 class AExamWeapon;
+class AExamCharacter;
 
 /**
  * 
@@ -40,8 +41,12 @@ public:
 	float Damage;
 
 	void AdjustAttributeForMaxChange();
+	void SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
 
+
+	bool bIsEquipped;
 	bool bWantsToFire;
 
+	class AExamWeapon* PreviousWeapon;
 	class AExamWeapon* CurrentWeapon;
 };

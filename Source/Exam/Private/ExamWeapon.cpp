@@ -104,6 +104,49 @@ void AExamWeapon::DetermineWeaponState()
 	SetWeaponState(NewState);
 }
 
+void AExamWeapon::SetOwningPawn(AExamCharacter* NewOwner)
+{
+	if (MyPawn != NewOwner)
+	{
+		Instigator = NewOwner;
+		MyPawn = NewOwner;
+		// Net owner for RPC calls.
+		SetOwner(NewOwner);
+	}
+}
+
+
+void AExamWeapon::OnEquip(bool bPlayAnimation)
+{
+	bPendingEquip = true;
+	DetermineWeaponState();
+
+	if (bPlayAnimation)
+	{
+		float Duration = PlayWeaponAnimation(EquipAnim);
+		if (Duration <= 0.0f)
+		{
+			// Failsafe in case animation is missing
+			Duration = NoEquipAnimDuration;
+		}
+		EquipStartedTime = GetWorld()->TimeSeconds;
+		EquipDuration = Duration;
+
+		GetWorldTimerManager().SetTimer(EquipFinishedTimerHandle, this, &ASWeapon::OnEquipFinished, Duration, false);
+	}
+	else
+	{
+		/* Immediately finish equipping */
+		OnEquipFinished();
+	}
+
+	if (MyPawn && MyPawn->IsLocallyControlled())
+	{
+		PlayWeaponSound(EquipSound);
+	}
+}
+
+
 void AExamWeapon::SetWeaponState(EWeaponState NewState)
 {
 	const EWeaponState PrevState = CurrentState;
@@ -362,5 +405,72 @@ void AExamWeapon::StartReload(bool bFromReplication)
 			PlayWeaponSound(ReloadSound);
 		}
 		*/
+	}
+}
+
+void AExamWeapon::OnEquip(bool bPlayAnimation)
+{
+	bPendingEquip = true;
+	DetermineWeaponState();
+
+	if (bPlayAnimation)
+	{
+		float Duration = PlayWeaponAnimation(EquipAnim);
+		if (Duration <= 0.0f)
+		{
+			// Failsafe in case animation is missing
+			Duration = NoEquipAnimDuration;
+		}
+		EquipStartedTime = GetWorld()->TimeSeconds;
+		EquipDuration = Duration;
+
+		GetWorldTimerManager().SetTimer(EquipFinishedTimerHandle, this, &AExamWeapon::OnEquipFinished, Duration, false);
+	}
+	else
+	{
+		/* Immediately finish equipping */
+		OnEquipFinished();
+	}
+
+	if (MyPawn && MyPawn->IsLocallyControlled())
+	{
+		PlayWeaponSound(EquipSound);
+	}
+}
+
+
+void AExamWeapon::AttachMeshToPawn(EInventorySlot Slot)
+{
+	if (MyPawn)
+	{
+		// Remove and hide
+		DetachMeshFromPawn();
+
+		USkeletalMeshComponent* PawnMesh = MyPawn->GetMesh();
+		FName AttachPoint = MyPawn->GetInventoryAttachPoint(Slot);
+		Mesh->SetHiddenInGame(false);
+		Mesh->AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);
+	}
+}
+
+
+void AExamWeapon::OnEquipFinished()
+{
+	AttachMeshToPawn();
+
+	bIsEquipped = true;
+	bPendingEquip = false;
+
+	DetermineWeaponState();
+
+	if (MyPawn)
+	{
+		// Try to reload empty clip
+		if (MyPawn->IsLocallyControlled() &&
+			CurrentAmmoInClip <= 0 &&
+			CanReload())
+		{
+			StartReload();
+		}
 	}
 }

@@ -101,11 +101,11 @@ public:
 	void StopFire();
 	void OnStartTargeting();
 	void OnEndTargeting();
+	void StopWeaponFire();
 
 	class UCarryObjectComponent* CarriedObjectComp;
 
 private:
-	
-
+	UStaticMeshComponent* GetCarriedMeshComp();
 };
 

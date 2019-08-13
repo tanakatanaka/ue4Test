@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "CarryObjectComponent.generated.h"
 
 /**
@@ -24,10 +25,10 @@ public:
 	bool GetIsCarryingActor();
 	void Pickup();
 	void Drop();
+	void Throw();
 
 	UFUNCTION(Reliable, NetMulticast)
 	void OnDropMulticast();
-
 	void OnDropMulticast_Implementation();
 
 protected:
