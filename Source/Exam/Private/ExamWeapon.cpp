@@ -169,6 +169,12 @@ void AExamWeapon::OnEquip(bool bPlayAnimation)
 	}
 }
 
+void AExamWeapon::OnEnterInventory(AExamCharacter* NewOwner)
+{
+	SetOwningPawn(NewOwner);
+	AttachMeshToPawn(StorageSlot);
+}
+
 void AExamWeapon::SetWeaponState(EWeaponState NewState)
 {
 	const EWeaponState PrevState = CurrentState;

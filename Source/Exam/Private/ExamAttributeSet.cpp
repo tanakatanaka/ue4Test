@@ -87,3 +87,8 @@ FName UExamAttributeSet::GetInventoryAttachPoint(EInventorySlot Slot) const
 		return "";
 	}
 }
+
+void UExamAttributeSet::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}

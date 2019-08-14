@@ -26,6 +26,8 @@ public:
 
 	void SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon = nullptr);
 
+	void EquipWeapon(AExamWeapon* Weapon);
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -98,6 +100,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMoveSpeed() const;
 	
+	void AddWeapon(class AExamWeapon* Weapon);
+
 	bool CanFire() const;
 	bool CanReload() const;
 

@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "ExamGameMode.generated.h"
 
+class AExamWeapon;
+
+
 UCLASS(minimalapi)
 class AExamGameMode : public AGameModeBase
 {
@@ -13,6 +16,13 @@ class AExamGameMode : public AGameModeBase
 
 public:
 	AExamGameMode();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	TArray<TSubclassOf<class AExamWeapon>> DefaultInventoryClasses;
+
+protected:
+	virtual void SetPlayerDefaults(APawn* PlayerPawn) override;
+	virtual void SpawnDefaultInventory(APawn* PlayerPawn);
 };
 
 

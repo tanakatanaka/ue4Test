@@ -23,6 +23,9 @@ public:
 
 	bool IsAlive();
 
+	UPROPERTY(Transient, Replicated)
+	TArray<AExamWeapon*> Inventory;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	float Health;
 
@@ -44,6 +47,8 @@ public:
 	void AdjustAttributeForMaxChange();
 	void SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
 	FName GetInventoryAttachPoint(EInventorySlot Slot) const;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	bool bIsEquipped;
 	bool bWantsToFire;

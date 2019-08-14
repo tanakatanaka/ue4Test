@@ -153,6 +153,22 @@ void AExamCharacter::PawnClientRestart()
 	SetCurrentWeapon(AttributeSet->CurrentWeapon);
 }
 
+void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
+{
+	if (Weapon && Role == ROLE_Authority)
+	{
+		Weapon->OnEnterInventory(this);
+		AttributeSet->Inventory.AddUnique(Weapon);
+
+		// Equip first weapon in inventory
+		if (AttributeSet->Inventory.Num() > 0 && AttributeSet->CurrentWeapon == nullptr)
+		{
+			EquipWeapon(AttributeSet->Inventory[0]);
+		}
+	}
+
+}
+
 void AExamCharacter::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon)
 {
 	/* Maintain a reference for visual weapon swapping */
@@ -188,6 +204,25 @@ void AExamCharacter::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamW
 	/* NOTE: If you don't have an equip animation w/ animnotify to swap the meshes halfway through, then uncomment this to immediately swap instead */
 	//SwapToNewWeaponMesh();
 }
+
+void AExamCharacter::EquipWeapon(AExamWeapon* Weapon)
+{
+	if (Weapon)
+	{
+		/* Ignore if trying to equip already equipped weapon */
+		if (Weapon == AttributeSet->CurrentWeapon) return;
+
+		if (Role == ROLE_Authority)
+		{
+			SetCurrentWeapon(Weapon, AttributeSet->CurrentWeapon);
+		}
+		else
+		{
+			//ServerEquipWeapon(Weapon);
+		}
+	}
+}
+
 
 
 

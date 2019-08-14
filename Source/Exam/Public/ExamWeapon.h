@@ -32,6 +32,8 @@ public:
 	virtual void OnUnEquip();
 	void OnEquip(bool bPlayAnimation);
 
+	virtual void OnEnterInventory(AExamCharacter* NewOwner);
+
 	void StartFire();
 	void StopFire();
 	void SetOwningPawn(AExamCharacter* NewOwner);
@@ -40,6 +42,11 @@ public:
 protected:
 
 	AExamWeapon(const FObjectInitializer& ObjectInitializer);
+
+	/* The character socket to store this item at. */
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	EInventorySlot StorageSlot;
+
 
 	UFUNCTION()
 	void OnRep_Reload();
