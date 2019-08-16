@@ -21,8 +21,15 @@ public:
 	TArray<TSubclassOf<class AExamWeapon>> DefaultInventoryClasses;
 
 protected:
+	virtual void RestartPlayer(class AController* NewPlayer) override;
 	virtual void SetPlayerDefaults(APawn* PlayerPawn) override;
 	virtual void SpawnDefaultInventory(APawn* PlayerPawn);
+
+private:
+	/* Spawn at team player if any are alive */
+	UPROPERTY(EditDefaultsOnly, Category = "Rules")
+	bool bSpawnAtTeamPlayer;
+
 };
 
 

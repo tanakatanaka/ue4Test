@@ -104,6 +104,7 @@ public:
 
 	bool CanFire() const;
 	bool CanReload() const;
+	bool IsAlive() const;
 
 	void OnStartFire();
 	void OnStopFire();

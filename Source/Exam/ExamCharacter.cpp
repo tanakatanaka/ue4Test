@@ -151,6 +151,8 @@ void AExamCharacter::PawnClientRestart()
 	Super::PawnClientRestart();
 
 	SetCurrentWeapon(AttributeSet->CurrentWeapon);
+
+	UE_LOG(LogTemp, Error, TEXT("AExamCharacter::PawnClientRestart"));
 }
 
 void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
@@ -321,8 +323,14 @@ void AExamCharacter::SetTargeting(bool NewTargeting)
 
 bool AExamCharacter::CanReload() const
 {
-	return AttributeSet->IsAlive();
+	return IsAlive();
 }
+
+bool AExamCharacter::IsAlive() const
+{
+	return AttributeSet->Health > 0;
+}
+
 
 void AExamCharacter::StopWeaponFire()
 {

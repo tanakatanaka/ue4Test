@@ -21,8 +21,6 @@ public:
 	UExamAttributeSet();
 	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
 
-	bool IsAlive();
-
 	UPROPERTY(Transient, Replicated)
 	TArray<AExamWeapon*> Inventory;
 

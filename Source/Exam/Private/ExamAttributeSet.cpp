@@ -24,12 +24,6 @@ UExamAttributeSet::UExamAttributeSet()
 
 }
 
-bool UExamAttributeSet::IsAlive()
-{
-	return Health > 0;
-}
-
-
 void UExamAttributeSet::AdjustAttributeForMaxChange()
 {
 
