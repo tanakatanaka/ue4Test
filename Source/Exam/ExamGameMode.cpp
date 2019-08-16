@@ -19,6 +19,8 @@ AExamGameMode::AExamGameMode()
 	}
 
 	bSpawnAtTeamPlayer = true;
+
+	UE_LOG(LogTemp, Error, TEXT("AExamGameMode constracter"));
 }
 
 void AExamGameMode::RestartPlayer(class AController* NewPlayer)

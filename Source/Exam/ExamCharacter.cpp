@@ -151,8 +151,6 @@ void AExamCharacter::PawnClientRestart()
 	Super::PawnClientRestart();
 
 	SetCurrentWeapon(AttributeSet->CurrentWeapon);
-
-	UE_LOG(LogTemp, Error, TEXT("AExamCharacter::PawnClientRestart"));
 }
 
 void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
