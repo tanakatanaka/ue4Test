@@ -37,6 +37,10 @@ public:
 	void StartFire();
 	void StopFire();
 	void SetOwningPawn(AExamCharacter* NewOwner);
+	/* Get pawn owner */
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	class AExamCharacter* GetPawnOwner() const;
+	
 	void AttachMeshToPawn(EInventorySlot Slot = EInventorySlot::Hands);
 
 protected:
@@ -46,6 +50,9 @@ protected:
 	/* The character socket to store this item at. */
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	EInventorySlot StorageSlot;
+
+	FVector GetMuzzleLocation() const;
+	FVector GetMuzzleDirection() const;
 
 
 	UFUNCTION()
@@ -57,6 +64,7 @@ protected:
 
 	virtual void SimulateWeaponFire();
 
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
 	class AExamCharacter* MyPawn;
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* Mesh;
@@ -67,6 +75,8 @@ protected:
 	float NoEquipAnimDuration;
 
 	float PlayWeaponAnimation(UAnimMontage* Animation, float InPlayRate = 1.f, FName StartSectionName = NAME_None);
+
+	FHitResult WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const;
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 StartAmmo;
@@ -118,6 +128,9 @@ private:
 
 	UPROPERTY(Transient)
 	UParticleSystemComponent* MuzzlePSC;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName MuzzleAttachPoint;
 
 	virtual void HandleFiring();
 	virtual void PostInitializeComponents() override;

@@ -98,6 +98,8 @@ void AExamGameMode::RestartPlayer(class AController* NewPlayer)
 			}
 		}
 	}
+
+	UE_LOG(LogTemp, Error, TEXT("AExamGameMode restart"));
 }
 
 void AExamGameMode::SetPlayerDefaults(APawn* PlayerPawn)
@@ -125,4 +127,6 @@ void AExamGameMode::SpawnDefaultInventory(APawn* PlayerPawn)
 			}
 		}
 	}
+
+	UE_LOG(LogTemp, Error, TEXT("AExamGameMode SpawnDefaultInventory"));
 }

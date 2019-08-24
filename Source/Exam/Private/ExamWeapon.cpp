@@ -5,6 +5,7 @@
 #include "ExamCharacter.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
+#include "../Exam.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -102,6 +103,11 @@ void AExamWeapon::DetermineWeaponState()
 	}
 
 	SetWeaponState(NewState);
+}
+
+class AExamCharacter* AExamWeapon::GetPawnOwner() const
+{
+	return MyPawn;
 }
 
 void AExamWeapon::SetOwningPawn(AExamCharacter* NewOwner)
@@ -261,6 +267,28 @@ bool AExamWeapon::CanReload()
 	bool bGotAmmo = (CurrentAmmoInClip < MaxAmmoPerClip) && ((CurrentAmmo - CurrentAmmoInClip) > 0);
 	bool bStateOKToReload = ((CurrentState == EWeaponState::Idle) || (CurrentState == EWeaponState::Firing));
 	return (bCanReload && bGotAmmo && bStateOKToReload);
+}
+
+FVector AExamWeapon::GetMuzzleLocation() const
+{
+	return Mesh->GetSocketLocation(MuzzleAttachPoint);
+}
+
+
+FVector AExamWeapon::GetMuzzleDirection() const
+{
+	return Mesh->GetSocketRotation(MuzzleAttachPoint).Vector();
+}
+
+FHitResult AExamWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const
+{
+	FCollisionQueryParams TraceParams(TEXT("WeaponTrace"), true, Instigator);
+	TraceParams.bReturnPhysicalMaterial = true;
+
+	FHitResult Hit(ForceInit);
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
+
+	return Hit;
 }
 
 UAudioComponent* AExamWeapon::PlayWeaponSound(USoundCue* SoundToPlay)
