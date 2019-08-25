@@ -64,7 +64,7 @@ protected:
 
 	virtual void SimulateWeaponFire();
 
-	UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
+	//UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
 	class AExamCharacter* MyPawn;
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* Mesh;
