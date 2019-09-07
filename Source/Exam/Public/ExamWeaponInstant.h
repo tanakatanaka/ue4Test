@@ -13,6 +13,12 @@ class EXAM_API AExamWeaponInstant : public AExamWeapon
 	GENERATED_BODY()
 	
 protected:
+	virtual void FireWeapon() override;
+
+	void DealDamage(const FHitResult& Impact, const FVector& ShootDir);
+
+	bool ShouldDealDamage(AActor* TestActor) const;
+
 	UPROPERTY(EditDefaultsOnly)
 	float WeaponRange;
 
@@ -21,6 +27,24 @@ protected:
 
 	UFUNCTION()
 	void OnRep_HitLocation();
+
+	/************************************************************************/
+	/* Weapon Configuration                                                 */
+	/************************************************************************/
+
+	UPROPERTY(EditDefaultsOnly)
+	float HitDamage;
+
+	/************************************************************************/
+	/* Damage Processing                                                    */
+	/************************************************************************/
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UDamageType> DamageType;
+
+	void ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir);
+	void ProcessInstantHitConfirmed(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir);
+
 
 private:
 	void SimulateInstantHit(const FVector& ImpactPoint);

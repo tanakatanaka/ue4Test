@@ -7,7 +7,8 @@
 #include "Engine/World.h"
 #include "../Exam.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "ExamCharacter.h"
+#include "../Public/ExamPlayerController.h"
 
 AExamWeapon::AExamWeapon(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
@@ -330,7 +331,7 @@ void AExamWeapon::HandleFiring()
 
 		if (MyPawn && MyPawn->IsLocallyControlled())
 		{
-			//FireWeapon();
+			FireWeapon();
 
 			//UseAmmo();
 
@@ -504,4 +505,43 @@ void AExamWeapon::DetachMeshFromPawn()
 {
 	Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	Mesh->SetHiddenInGame(true);
+}
+
+
+FVector AExamWeapon::GetAdjustedAim() const
+{
+	AExamPlayerController* const PC = Instigator ? Cast<AExamPlayerController>(Instigator->Controller) : nullptr;
+	FVector FinalAim = FVector::ZeroVector;
+
+	if (PC)
+	{
+		FVector CamLoc;
+		FRotator CamRot;
+		PC->GetPlayerViewPoint(CamLoc, CamRot);
+
+		FinalAim = CamRot.Vector();
+	}
+	else if (Instigator)
+	{
+		FinalAim = Instigator->GetBaseAimRotation().Vector();
+	}
+
+	return FinalAim;
+}
+
+FVector AExamWeapon::GetCameraDamageStartLocation(const FVector& AimDir) const
+{
+	AExamPlayerController* PC = MyPawn ? Cast<AExamPlayerController>(MyPawn->Controller) : nullptr;
+	FVector OutStartTrace = FVector::ZeroVector;
+
+	if (PC)
+	{
+		FRotator DummyRot;
+		PC->GetPlayerViewPoint(OutStartTrace, DummyRot);
+
+		// Adjust trace so there is nothing blocking the ray between the camera and the pawn, and calculate distance from adjusted start
+		OutStartTrace = OutStartTrace + AimDir * (FVector::DotProduct((Instigator->GetActorLocation() - OutStartTrace), AimDir));
+	}
+
+	return OutStartTrace;
 }

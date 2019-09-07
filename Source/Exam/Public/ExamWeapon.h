@@ -45,6 +45,11 @@ public:
 
 protected:
 
+	virtual void FireWeapon() PURE_VIRTUAL(ASWeapon::FireWeapon, );
+	FVector GetAdjustedAim() const;
+	FVector GetCameraDamageStartLocation(const FVector& AimDir) const;
+
+
 	AExamWeapon(const FObjectInitializer& ObjectInitializer);
 
 	/* The character socket to store this item at. */
