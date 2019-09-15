@@ -1,4 +1,3 @@
-
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "ExamWeaponInstant.h"
 #include "../ExamCharacter.h"
@@ -6,6 +5,8 @@
 #include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 #include "Runtime/Engine/Classes/PhysicalMaterials/PhysicalMaterial.h"
 #include "../Exam.h"
+#include "Engine/World.h"
+
 
 AExamWeaponInstant::AExamWeaponInstant(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
@@ -45,14 +46,14 @@ bool AExamWeaponInstant::ServerNotifyHit_Validate(const FHitResult Impact, FVect
 
 void AExamWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
 {
-	//if (ImpactTemplate && Impact.bBlockingHit)
+	if (ImpactTemplate && Impact.bBlockingHit)
 	{
 		/* This function prepares an actor to spawn, but requires another call to finish the actual spawn progress. This allows manipulation of properties before entering into the level */
-		//ASImpactEffect* EffectActor = GetWorld()->SpawnActorDeferred<ASImpactEffect>(ImpactTemplate, FTransform(Impact.ImpactPoint.Rotation(), Impact.ImpactPoint));
-		//if (EffectActor)
+		AImpactEffect* EffectActor = GetWorld()->SpawnActorDeferred<AImpactEffect>(ImpactTemplate, FTransform(Impact.ImpactPoint.Rotation(), Impact.ImpactPoint));
+		if (EffectActor)
 		{
-			//EffectActor->SurfaceHit = Impact;
-			//UGameplayStatics::FinishSpawningActor(EffectActor, FTransform(Impact.ImpactNormal.Rotation(), Impact.ImpactPoint));
+			EffectActor->SurfaceHit = Impact;
+			UGameplayStatics::FinishSpawningActor(EffectActor, FTransform(Impact.ImpactNormal.Rotation(), Impact.ImpactPoint));
 		}
 
 	}

@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "../Public/ExamWeapon.h"
 #include "GameFramework/Actor.h"
+#include "ImpactEffect.h"
 #include "ExamWeaponInstant.generated.h"
+
 
 UCLASS()
 class EXAM_API AExamWeaponInstant : public AExamWeapon
@@ -62,8 +64,8 @@ private:
 
 	bool ServerNotifyHit_Validate(const FHitResult Impact, FVector_NetQuantizeNormal ShootDir);
 
-	//UPROPERTY(EditDefaultsOnly)
-	//TSubclassOf<class ASImpactEffect> ImpactTemplate;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AImpactEffect> ImpactTemplate;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName TrailTargetParam;
@@ -73,9 +75,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UParticleSystem* TracerFX;
-
-	//UPROPERTY(EditDefaultsOnly)
-	//TSubclassOf<class ASImpactEffect> ImpactTemplate;
 
 	UPROPERTY(EditDefaultsOnly)
 	float MinimumProjectileSpawnDistance;

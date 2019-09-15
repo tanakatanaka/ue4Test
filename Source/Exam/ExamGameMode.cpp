@@ -19,8 +19,6 @@ AExamGameMode::AExamGameMode()
 	}
 
 	bSpawnAtTeamPlayer = true;
-
-	UE_LOG(LogTemp, Error, TEXT("AExamGameMode constracter"));
 }
 
 void AExamGameMode::RestartPlayer(class AController* NewPlayer)
@@ -127,6 +125,4 @@ void AExamGameMode::SpawnDefaultInventory(APawn* PlayerPawn)
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Error, TEXT("AExamGameMode SpawnDefaultInventory"));
 }

@@ -22,7 +22,7 @@ AImpactEffect::AImpactEffect()
 
 void AImpactEffect::PostInitializeComponents()
 {
-	//Super::PostInitializeComponents();
+	Super::PostInitializeComponents();
 
 	/* Figure out what we hit (SurfaceHit is setting during actor instantiation in weapon class) */
 	UPhysicalMaterial* HitPhysMat = SurfaceHit.PhysMaterial.Get();
