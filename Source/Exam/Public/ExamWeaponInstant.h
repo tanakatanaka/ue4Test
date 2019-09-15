@@ -45,6 +45,15 @@ protected:
 	void ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir);
 	void ProcessInstantHitConfirmed(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir);
 
+	AExamWeaponInstant(const FObjectInitializer& ObjectInitializer);
+
+	/* Hit verification: threshold for dot product between view direction and hit direction */
+	UPROPERTY(EditDefaultsOnly)
+	float AllowedViewDotHitDir;
+
+	/* Hit verification: scale for bounding box of hit actor */
+	UPROPERTY(EditDefaultsOnly)
+	float ClientSideHitLeeway;
 
 private:
 	void SimulateInstantHit(const FVector& ImpactPoint);

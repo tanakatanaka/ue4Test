@@ -7,6 +7,19 @@
 #include "Runtime/Engine/Classes/PhysicalMaterials/PhysicalMaterial.h"
 #include "../Exam.h"
 
+AExamWeaponInstant::AExamWeaponInstant(const class FObjectInitializer& PCIP)
+	: Super(PCIP)
+{
+	HitDamage = 26;
+	WeaponRange = 15000;
+
+	AllowedViewDotHitDir = -1.0f;
+	ClientSideHitLeeway = 200.0f;
+	MinimumProjectileSpawnDistance = 800;
+	TracerRoundInterval = 3;
+}
+
+
 void AExamWeaponInstant::SimulateInstantHit(const FVector& ImpactPoint)
 {
 	const FVector MuzzleOrigin = GetMuzzleLocation();

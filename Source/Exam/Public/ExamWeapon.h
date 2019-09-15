@@ -43,6 +43,10 @@ public:
 	
 	void AttachMeshToPawn(EInventorySlot Slot = EInventorySlot::Hands);
 
+	UFUNCTION(BlueprintCallable, Category = "Ammo")
+	int32 GetCurrentAmmo() const;
+
+
 protected:
 
 	virtual void FireWeapon() PURE_VIRTUAL(ASWeapon::FireWeapon, );
@@ -110,6 +114,8 @@ protected:
 	virtual void OnEquipFinished();
 
 	void DetachMeshFromPawn();
+
+	void UseAmmo();
 
 private:
 

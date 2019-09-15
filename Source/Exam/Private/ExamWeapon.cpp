@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ExamCharacter.h"
 #include "../Public/ExamPlayerController.h"
+#include "Sound/SoundCue.h"
 
 AExamWeapon::AExamWeapon(const class FObjectInitializer& PCIP)
 	: Super(PCIP)
@@ -275,6 +276,12 @@ FVector AExamWeapon::GetMuzzleLocation() const
 	return Mesh->GetSocketLocation(MuzzleAttachPoint);
 }
 
+void AExamWeapon::UseAmmo()
+{
+	CurrentAmmoInClip--;
+	CurrentAmmo--;
+}
+
 
 FVector AExamWeapon::GetMuzzleDirection() const
 {
@@ -297,7 +304,7 @@ UAudioComponent* AExamWeapon::PlayWeaponSound(USoundCue* SoundToPlay)
 	UAudioComponent* AC = nullptr;
 	if (SoundToPlay && MyPawn)
 	{
-		//AC = UGameplayStatics::SpawnSoundAttached(SoundToPlay, MyPawn->GetRootComponent());
+		AC = UGameplayStatics::SpawnSoundAttached(SoundToPlay, MyPawn->GetRootComponent());
 	}
 
 	return AC;
@@ -308,7 +315,7 @@ void AExamWeapon::SimulateWeaponFire()
 {
 	if (MuzzleFX)
 	{
-		//MuzzlePSC = UGameplayStatics::SpawnEmitterAttached(MuzzleFX, Mesh, MuzzleAttachPoint);
+		MuzzlePSC = UGameplayStatics::SpawnEmitterAttached(MuzzleFX, Mesh, MuzzleAttachPoint);
 	}
 
 	if (!bPlayingFireAnim)
@@ -333,7 +340,7 @@ void AExamWeapon::HandleFiring()
 		{
 			FireWeapon();
 
-			//UseAmmo();
+			UseAmmo();
 
 			// Update firing FX on remote clients if this is called on server
 			BurstCounter++;
@@ -345,7 +352,7 @@ void AExamWeapon::HandleFiring()
 	}
 	else if (MyPawn && MyPawn->IsLocallyControlled())
 	{
-		//if (GetCurrentAmmo() == 0 && !bRefiring)
+		if (GetCurrentAmmo() == 0 && !bRefiring)
 		{
 			PlayWeaponSound(OutOfAmmoSound);
 		}
@@ -374,7 +381,7 @@ void AExamWeapon::HandleFiring()
 		bRefiring = (CurrentState == EWeaponState::Firing && TimeBetweenShots > 0.0f);
 		if (bRefiring)
 		{
-			//GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &ASWeapon::HandleFiring, TimeBetweenShots, false);
+			GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &AExamWeapon::HandleFiring, TimeBetweenShots, false);
 		}
 	}
 
@@ -400,6 +407,12 @@ float AExamWeapon::PlayWeaponAnimation(UAnimMontage* Animation, float InPlayRate
 
 	return Duration;
 }
+
+int32 AExamWeapon::GetCurrentAmmo() const
+{
+	return CurrentAmmo;
+}
+
 
 void AExamWeapon::PostInitializeComponents()
 {
