@@ -40,8 +40,8 @@ AExamWeapon::AExamWeapon(const class FObjectInitializer& PCIP)
 	StartAmmo = 999;
 	MaxAmmo = 999;
 	MaxAmmoPerClip = 30;
-	//NoAnimReloadDuration = 1.5f;
-	//NoEquipAnimDuration = 0.5f;
+	NoAnimReloadDuration = 1.5f;
+	NoEquipAnimDuration = 0.5f;
 }
 
 void AExamWeapon::StartFire()
@@ -145,6 +145,18 @@ void AExamWeapon::OnUnEquip()
 
 	DetermineWeaponState();
 }
+
+void AExamWeapon::ReloadWeapon()
+{
+	int32 ClipDelta = FMath::Min(MaxAmmoPerClip - CurrentAmmoInClip, CurrentAmmo - CurrentAmmoInClip);
+
+	if (ClipDelta > 0)
+	{
+		CurrentAmmoInClip += ClipDelta;
+	}
+}
+
+
 
 void AExamWeapon::OnEquip(bool bPlayAnimation)
 {	
@@ -458,23 +470,22 @@ void AExamWeapon::StartReload(bool bFromReplication)
 		DetermineWeaponState();
 
 		float AnimDuration = PlayWeaponAnimation(ReloadAnim);
-		/*
+		
 		if (AnimDuration <= 0.0f)
 		{
 			AnimDuration = NoAnimReloadDuration;
 		}
 
-		GetWorldTimerManager().SetTimer(TimerHandle_StopReload, this, &ASWeapon::StopSimulateReload, AnimDuration, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_StopReload, this, &AExamWeapon::StopSimulateReload, AnimDuration, false);
 		if (Role == ROLE_Authority)
 		{
-			GetWorldTimerManager().SetTimer(TimerHandle_ReloadWeapon, this, &ASWeapon::ReloadWeapon, FMath::Max(0.1f, AnimDuration - 0.1f), false);
+			GetWorldTimerManager().SetTimer(TimerHandle_ReloadWeapon, this, &AExamWeapon::ReloadWeapon, FMath::Max(0.1f, AnimDuration - 0.1f), false);
 		}
 
 		if (MyPawn && MyPawn->IsLocallyControlled())
 		{
 			PlayWeaponSound(ReloadSound);
 		}
-		*/
 	}
 }
 

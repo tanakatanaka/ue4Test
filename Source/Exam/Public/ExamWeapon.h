@@ -49,6 +49,16 @@ public:
 
 protected:
 
+	/* Time to assign on reload when no animation is found */
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	float NoAnimReloadDuration;
+
+	/* Time to assign on equip when no animation is found */
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	float NoEquipAnimDuration;
+
+	FTimerHandle TimerHandle_StopReload;
+
 	virtual void FireWeapon() PURE_VIRTUAL(ASWeapon::FireWeapon, );
 	FVector GetAdjustedAim() const;
 	FVector GetCameraDamageStartLocation(const FVector& AimDir) const;
@@ -79,9 +89,6 @@ protected:
 	USkeletalMeshComponent* Mesh;
 
 	UAudioComponent* PlayWeaponSound(USoundCue* SoundToPlay);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Animation")
-	float NoEquipAnimDuration;
 
 	float PlayWeaponAnimation(UAnimMontage* Animation, float InPlayRate = 1.f, FName StartSectionName = NAME_None);
 
@@ -116,6 +123,8 @@ protected:
 	void DetachMeshFromPawn();
 
 	void UseAmmo();
+
+	virtual void ReloadWeapon();
 
 private:
 
