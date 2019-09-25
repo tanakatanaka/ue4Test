@@ -89,6 +89,11 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AExamCharacter::OnResetVR);
 }
 
+bool AExamCharacter::IsTargeting() const
+{
+	return bIsTargeting;
+}
+
 
 void AExamCharacter::OnResetVR()
 {

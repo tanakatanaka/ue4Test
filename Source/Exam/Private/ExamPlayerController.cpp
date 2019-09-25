@@ -2,11 +2,14 @@
 
 #include "../Public/ExamPlayerController.h"
 #include "../Public/ExamGameInstance.h"
+#include "../Private/EPlayerCameraManager.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
+
+
 
 AExamPlayerController::AExamPlayerController()
 {
-
+	PlayerCameraManagerClass = AEPlayerCameraManager::StaticClass();
 }
 
 void AExamPlayerController::BeginPlay()

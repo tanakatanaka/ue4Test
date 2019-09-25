@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "../Public/ExamAttributeSet.h"
+#include "Camera/CameraComponent.h"
 #include "ExamCharacter.generated.h"
+
 
 class UCarryObjectComponent;
 
@@ -37,6 +39,16 @@ public:
 	float BaseLookUpRate;
 
 	FName GetInventoryAttachPoint(EInventorySlot Slot) const;
+
+	FORCEINLINE UCameraComponent* GetCameraComponent()
+	{
+		return FollowCamera;
+	}
+
+	/* Is player aiming down sights */
+	UFUNCTION(BlueprintCallable, Category = "Targeting")
+	bool IsTargeting() const;
+
 
 protected:
 
