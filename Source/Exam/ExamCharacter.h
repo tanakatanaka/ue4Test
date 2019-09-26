@@ -30,6 +30,9 @@ public:
 
 	void EquipWeapon(AExamWeapon* Weapon);
 
+	UPROPERTY(Transient, Replicated)
+	bool bIsJumping;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -49,8 +52,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
 	bool IsTargeting() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Targeting")
+	FRotator GetAimOffsets() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual bool IsSprinting() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool IsInitiatedJump() const;
+
 
 protected:
+
+	/* Character wants to run, checked during Tick to see if allowed */
+	UPROPERTY(Transient, Replicated)
+	bool bWantsToRun;
 
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();
@@ -79,8 +95,6 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-protected:
-
 	/* Called every frame */
 	//virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -96,6 +110,10 @@ protected:
 	bool bIsTargeting;
 
 	void SetTargeting(bool NewTargeting);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetingSpeedModifier;
+
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -127,6 +145,9 @@ public:
 	void StopWeaponFire();
 
 	class UCarryObjectComponent* CarriedObjectComp;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	bool IsFiring() const;
 
 private:
 	UStaticMeshComponent* GetCarriedMeshComp();

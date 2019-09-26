@@ -50,6 +50,8 @@ AExamCharacter::AExamCharacter()
 	CarriedObjectComp = CreateDefaultSubobject<UCarryObjectComponent>(TEXT("CarriedObjectComp"));
 	CarriedObjectComp->SetupAttachment(GetRootComponent());
 
+	bWantsToRun = false;
+	bIsJumping = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,6 +94,37 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 bool AExamCharacter::IsTargeting() const
 {
 	return bIsTargeting;
+}
+
+bool AExamCharacter::IsInitiatedJump() const
+{
+	return bIsJumping;
+}
+
+bool AExamCharacter::IsFiring() const
+{
+	return AttributeSet->CurrentWeapon && AttributeSet->CurrentWeapon->GetCurrentState() == EWeaponState::Firing;
+}
+
+bool AExamCharacter::IsSprinting() const
+{
+	if (!GetCharacterMovement())
+	{
+		return false;
+	}
+
+	return bWantsToRun && !IsTargeting() && !GetVelocity().IsZero()
+		// Don't allow sprint while strafing sideways or standing still (1.0 is straight forward, -1.0 is backward while near 0 is sideways or standing still)
+		&& (FVector::DotProduct(GetVelocity().GetSafeNormal2D(), GetActorRotation().Vector()) > 0.8); // Changing this value to 0.1 allows for diagonal sprinting. (holding W+A or W+D keys)
+}
+
+FRotator AExamCharacter::GetAimOffsets() const
+{
+	const FVector AimDirWS = GetBaseAimRotation().Vector();
+	const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
+	const FRotator AimRotLS = AimDirLS.Rotation();
+
+	return AimRotLS;
 }
 
 
@@ -227,10 +260,6 @@ void AExamCharacter::EquipWeapon(AExamWeapon* Weapon)
 		}
 	}
 }
-
-
-
-
 
 float AExamCharacter::GetHealth() const
 {

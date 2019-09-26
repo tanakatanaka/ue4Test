@@ -46,6 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ammo")
 	int32 GetCurrentAmmo() const;
 
+	EWeaponState GetCurrentState() const;
 
 protected:
 
@@ -80,6 +81,7 @@ protected:
 	/* Is weapon and character currently capable of starting a reload */
 	bool CanReload();
 	bool CanFire() const;
+	
 
 	virtual void SimulateWeaponFire();
 

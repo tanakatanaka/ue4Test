@@ -446,6 +446,12 @@ bool AExamWeapon::CanFire() const
 	*/
 }
 
+EWeaponState AExamWeapon::GetCurrentState() const
+{
+	return CurrentState;
+}
+
+
 void AExamWeapon::StopSimulatingWeaponFire()
 {
 	if (bPlayingFireAnim)
