@@ -38,6 +38,7 @@ AExamCharacter::AExamCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SocketOffset = FVector(0, 35, 0);
 	CameraBoom->TargetOffset = FVector(0, 0, 55);
+	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->SetupAttachment(GetRootComponent());	// Create a follow camera
 
