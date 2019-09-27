@@ -36,11 +36,15 @@ AExamCharacter::AExamCharacter()
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->SocketOffset = FVector(0, 35, 0);
+	CameraBoom->TargetOffset = FVector(0, 0, 55);
+	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->SetupAttachment(GetRootComponent());	// Create a follow camera
 
-	// Create a follow camera
+	//CameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
+	//CameraComp->SetupAttachment(CameraBoomComp);
+
+
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
