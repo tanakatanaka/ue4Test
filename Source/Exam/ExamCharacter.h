@@ -61,6 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	bool IsInitiatedJump() const;
 
+	bool WeaponSlotAvailable(EInventorySlot CheckSlot);
 
 protected:
 

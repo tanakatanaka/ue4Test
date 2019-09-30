@@ -48,6 +48,12 @@ public:
 
 	EWeaponState GetCurrentState() const;
 
+	FORCEINLINE EInventorySlot GetStorageSlot()
+	{
+		return StorageSlot;
+	}
+
+
 protected:
 
 	/* Time to assign on reload when no animation is found */

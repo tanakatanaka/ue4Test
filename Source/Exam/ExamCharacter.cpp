@@ -396,6 +396,22 @@ UStaticMeshComponent* UCarryObjectComponent::GetCarriedMeshComp()
 	return nullptr;
 }
 
+bool AExamCharacter::WeaponSlotAvailable(EInventorySlot CheckSlot)
+{
+	/* Iterate all weapons to see if requested slot is occupied */
+	for (int32 i = 0; i < AttributeSet->Inventory.Num(); i++)
+	{
+		AExamWeapon* Weapon = AttributeSet->Inventory[i];
+		if (Weapon)
+		{
+			if (Weapon->GetStorageSlot() == CheckSlot)
+				return false;
+		}
+	}
+
+	return true;
+}
+
 
 
 void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

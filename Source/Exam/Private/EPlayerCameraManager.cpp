@@ -9,7 +9,7 @@ AEPlayerCameraManager::AEPlayerCameraManager(const class FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 	NormalFOV = 90.0f;
-	TargetingFOV = 65.0f;
+	TargetingFOV = 35.0f;
 
 	ViewPitchMin = -80.0f;
 	ViewPitchMax = 87.0f;
