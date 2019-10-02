@@ -6,6 +6,11 @@
 
 UExamAttributeSet::UExamAttributeSet()
 {
+	
+}
+
+void UExamAttributeSet::Initialize(AExamCharacter* _owner)
+{
 	Health = 1.f;
 	MaxHealth = 1.f;
 	AttackPower = 1.f;
@@ -21,8 +26,10 @@ UExamAttributeSet::UExamAttributeSet()
 	PelvisAttachPoint = TEXT("PelvisSocket");
 	SpineAttachPoint = TEXT("SpineSocket");
 
-
+	Owner = _owner;
 }
+
+
 
 void UExamAttributeSet::AdjustAttributeForMaxChange()
 {
@@ -30,7 +37,7 @@ void UExamAttributeSet::AdjustAttributeForMaxChange()
 }
 
 
-void UExamAttributeSet::SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon)
+void UExamAttributeSet::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon)
 {
 	/* Maintain a reference for visual weapon swapping */
 	PreviousWeapon = LastWeapon;
@@ -64,6 +71,39 @@ void UExamAttributeSet::SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapo
 	/* NOTE: If you don't have an equip animation w/ animnotify to swap the meshes halfway through, then uncomment this to immediately swap instead */
 	//SwapToNewWeaponMesh();
 }
+
+void UExamAttributeSet::RemoveWeapon(bool bDestroy)
+{
+	//if (Weapon && Role == ROLE_Authority)
+	{
+		bool bIsCurrent = CurrentWeapon == CurrentWeapon;
+
+		if (Inventory.Contains(CurrentWeapon))
+		{
+			CurrentWeapon->OnLeaveInventory();
+		}
+		Inventory.RemoveSingle(CurrentWeapon);
+
+		/* Replace weapon if we removed our current weapon */
+		if (bIsCurrent && Inventory.Num() > 0)
+		{
+			SetCurrentWeapon(Inventory[0]);
+		}
+
+		/* Clear reference to weapon if we have no items left in inventory */
+		if (Inventory.Num() == 0)
+		{
+			SetCurrentWeapon(nullptr);
+		}
+
+		if (bDestroy)
+		{
+			CurrentWeapon->Destroy();
+		}
+	}
+
+}
+
 
 FName UExamAttributeSet::GetInventoryAttachPoint(EInventorySlot Slot) const
 {

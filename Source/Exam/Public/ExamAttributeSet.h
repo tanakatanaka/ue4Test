@@ -20,6 +20,7 @@ class EXAM_API UExamAttributeSet : public UObject
 public:
 	UExamAttributeSet();
 	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
+	void Initialize(AExamCharacter* _owner);
 
 	UPROPERTY(Transient, Replicated)
 	TArray<AExamWeapon*> Inventory;
@@ -43,7 +44,8 @@ public:
 	float Damage;
 
 	void AdjustAttributeForMaxChange();
-	void SetCurrentWeapon(AExamCharacter* Owner, class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
+	void SetCurrentWeapon(class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
+	void RemoveWeapon(bool bDestroy);
 	FName GetInventoryAttachPoint(EInventorySlot Slot) const;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -66,4 +68,6 @@ private:
 	/* Attachpoint for primary weapons */
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName SpineAttachPoint;
+
+	AExamCharacter* Owner;
 };

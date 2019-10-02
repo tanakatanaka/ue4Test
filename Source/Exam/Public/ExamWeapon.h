@@ -12,6 +12,7 @@ class UAnimMontage;
 class USoundCue;
 class AExamCharacter;
 class UAudioComponent;
+class AWeaponPickup;
 
 UENUM()
 enum class EWeaponState
@@ -33,6 +34,7 @@ public:
 	void OnEquip(bool bPlayAnimation);
 
 	virtual void OnEnterInventory(AExamCharacter* NewOwner);
+	virtual void OnLeaveInventory();
 
 	void StartFire();
 	void StopFire();
@@ -53,6 +55,8 @@ public:
 		return StorageSlot;
 	}
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<class AWeaponPickup> WeaponPickupClass;
 
 protected:
 
@@ -88,8 +92,8 @@ protected:
 	bool CanReload();
 	bool CanFire() const;
 	
-
 	virtual void SimulateWeaponFire();
+	bool IsAttachedToPawn() const;
 
 	//UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
 	class AExamCharacter* MyPawn;

@@ -26,8 +26,6 @@ class AExamCharacter : public ACharacter
 public:
 	AExamCharacter();
 
-	void SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon = nullptr);
-
 	void EquipWeapon(AExamWeapon* Weapon);
 
 	UPROPERTY(Transient, Replicated)
@@ -145,12 +143,19 @@ public:
 	void OnEndTargeting();
 	void StopWeaponFire();
 
+	/* Mapped to input. Drops current weapon */
+	void DropWeapon();
+
 	class UCarryObjectComponent* CarriedObjectComp;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	bool IsFiring() const;
 
 private:
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	float DropWeaponMaxDistance;
+	
 	UStaticMeshComponent* GetCarriedMeshComp();
 };
 

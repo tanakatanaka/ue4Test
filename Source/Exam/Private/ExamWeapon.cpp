@@ -195,6 +195,27 @@ void AExamWeapon::OnEnterInventory(AExamCharacter* NewOwner)
 	AttachMeshToPawn(StorageSlot);
 }
 
+void AExamWeapon::OnLeaveInventory()
+{
+	if (Role == ROLE_Authority)
+	{
+		SetOwningPawn(nullptr);
+	}
+
+	if (IsAttachedToPawn())
+	{
+		OnUnEquip();
+	}
+
+	DetachMeshFromPawn();
+}
+
+bool AExamWeapon::IsAttachedToPawn() const
+{
+	return bIsEquipped || bPendingEquip;
+}
+
+
 void AExamWeapon::SetWeaponState(EWeaponState NewState)
 {
 	const EWeaponState PrevState = CurrentState;

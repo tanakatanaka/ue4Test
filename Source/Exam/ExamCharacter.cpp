@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "../Public/WeaponPickup.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AExamCharacter
@@ -51,7 +52,8 @@ AExamCharacter::AExamCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
-	
+	AttributeSet->Initialize(this);
+
 	CarriedObjectComp = CreateDefaultSubobject<UCarryObjectComponent>(TEXT("CarriedObjectComp"));
 	CarriedObjectComp->SetupAttachment(GetRootComponent());
 
@@ -189,11 +191,79 @@ void AExamCharacter::MoveRight(float Value)
 	}
 }
 
+void AExamCharacter::DropWeapon()
+{
+	if (Role < ROLE_Authority)
+	{
+		//ServerDropWeapon();
+		return;
+	}
+
+	if (AttributeSet->CurrentWeapon)
+	{
+		FVector CamLoc;
+		FRotator CamRot;
+
+		if (Controller == nullptr)
+		{
+			return;
+		}
+
+		/* Find a location to drop the item, slightly in front of the player.
+			Perform ray trace to check for blocking objects or walls and to make sure we don't drop any item through the level mesh */
+		Controller->GetPlayerViewPoint(CamLoc, CamRot);
+		FVector SpawnLocation;
+		FRotator SpawnRotation = CamRot;
+
+		const FVector Direction = CamRot.Vector();
+		const FVector TraceStart = GetActorLocation();
+		const FVector TraceEnd = GetActorLocation() + (Direction * DropWeaponMaxDistance);
+
+		/* Setup the trace params, we are only interested in finding a valid drop position */
+		FCollisionQueryParams TraceParams;
+		TraceParams.bTraceComplex = false;
+		TraceParams.bReturnPhysicalMaterial = false;
+		TraceParams.AddIgnoredActor(this);
+
+		FHitResult Hit;
+		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldDynamic, TraceParams);
+
+		/* Find farthest valid spawn location */
+		if (Hit.bBlockingHit)
+		{
+			/* Slightly move away from impacted object */
+			SpawnLocation = Hit.ImpactPoint + (Hit.ImpactNormal * 20);
+		}
+		else
+		{
+			SpawnLocation = TraceEnd;
+		}
+
+		/* Spawn the "dropped" weapon */
+		FActorSpawnParameters SpawnInfo;
+		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AWeaponPickup* NewWeaponPickup = GetWorld()->SpawnActor<AWeaponPickup>(AttributeSet->CurrentWeapon->WeaponPickupClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+
+		if (NewWeaponPickup)
+		{
+			/* Apply torque to make it spin when dropped. */
+			UStaticMeshComponent* MeshComp = NewWeaponPickup->GetMeshComponent();
+			if (MeshComp)
+			{
+				MeshComp->SetSimulatePhysics(true);
+				MeshComp->AddTorqueInRadians(FVector(1, 1, 1) * 4000000);
+			}
+		}
+
+		AttributeSet->RemoveWeapon(true);
+	}
+}
+
 void AExamCharacter::PawnClientRestart()
 {
 	Super::PawnClientRestart();
 
-	SetCurrentWeapon(AttributeSet->CurrentWeapon);
+	AttributeSet->SetCurrentWeapon(AttributeSet->CurrentWeapon);
 }
 
 void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
@@ -212,42 +282,6 @@ void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
 
 }
 
-void AExamCharacter::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon)
-{
-	/* Maintain a reference for visual weapon swapping */
-	AttributeSet->PreviousWeapon = LastWeapon;
-
-	AExamWeapon* LocalLastWeapon = nullptr;
-	if (LastWeapon)
-	{
-		LocalLastWeapon = LastWeapon;
-	}
-	else if (NewWeapon != AttributeSet->CurrentWeapon)
-	{
-		LocalLastWeapon = AttributeSet->CurrentWeapon;
-	}
-
-	// UnEquip the current
-	bool bHasPreviousWeapon = false;
-	if (LocalLastWeapon)
-	{
-		LocalLastWeapon->OnUnEquip();
-		bHasPreviousWeapon = true;
-	}
-
-	AttributeSet->CurrentWeapon = NewWeapon;
-
-	if (NewWeapon)
-	{
-		NewWeapon->SetOwningPawn(this);
-		/* Only play equip animation when we already hold an item in hands */
-		NewWeapon->OnEquip(bHasPreviousWeapon);
-	}
-
-	/* NOTE: If you don't have an equip animation w/ animnotify to swap the meshes halfway through, then uncomment this to immediately swap instead */
-	//SwapToNewWeaponMesh();
-}
-
 void AExamCharacter::EquipWeapon(AExamWeapon* Weapon)
 {
 	if (Weapon)
@@ -257,7 +291,7 @@ void AExamCharacter::EquipWeapon(AExamWeapon* Weapon)
 
 		if (Role == ROLE_Authority)
 		{
-			SetCurrentWeapon(Weapon, AttributeSet->CurrentWeapon);
+			AttributeSet->SetCurrentWeapon(Weapon, AttributeSet->CurrentWeapon);
 		}
 		else
 		{
