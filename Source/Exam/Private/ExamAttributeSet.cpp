@@ -74,9 +74,9 @@ void UExamAttributeSet::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AEx
 
 void UExamAttributeSet::RemoveWeapon(bool bDestroy)
 {
-	//if (Weapon && Role == ROLE_Authority)
+	if (CurrentWeapon)
 	{
-		bool bIsCurrent = CurrentWeapon == CurrentWeapon;
+		bool bIsCurrent = true;
 
 		if (Inventory.Contains(CurrentWeapon))
 		{
@@ -94,6 +94,7 @@ void UExamAttributeSet::RemoveWeapon(bool bDestroy)
 		if (Inventory.Num() == 0)
 		{
 			SetCurrentWeapon(nullptr);
+			bDestroy = false;
 		}
 
 		if (bDestroy)

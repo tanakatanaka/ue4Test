@@ -82,6 +82,10 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AExamCharacter::LookUpAtRate);
 
+	// Interaction
+	//PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AExamCharacter::Use);
+	PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &AExamCharacter::DropWeapon);
+
 	// Weapons
 	PlayerInputComponent->BindAction("Targeting", IE_Pressed, this, &AExamCharacter::OnStartTargeting);
 	PlayerInputComponent->BindAction("Targeting", IE_Released, this, &AExamCharacter::OnEndTargeting);
@@ -276,7 +280,10 @@ void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
 		// Equip first weapon in inventory
 		if (AttributeSet->Inventory.Num() > 0 && AttributeSet->CurrentWeapon == nullptr)
 		{
-			EquipWeapon(AttributeSet->Inventory[0]);
+			if (AttributeSet->Inventory.Num() < 2)
+			{
+				EquipWeapon(AttributeSet->Inventory[0]);
+			}
 		}
 	}
 
