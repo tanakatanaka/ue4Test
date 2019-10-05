@@ -142,6 +142,7 @@ public:
 	void OnStartTargeting();
 	void OnEndTargeting();
 	void StopWeaponFire();
+	void OnToggleCarryActor();
 
 	/* Mapped to input. Drops current weapon */
 	void DropWeapon();
@@ -150,6 +151,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	bool IsFiring() const;
+
+	/* Use the usable actor currently in focus, if any */
+	void Use();
+
+	class AUsableActor* GetUsableInView();
+
+	/*Max distance to use/focus on actors. */
+	UPROPERTY(EditDefaultsOnly, Category = "ObjectInteraction")
+	float MaxUseDistance;
 
 private:
 	

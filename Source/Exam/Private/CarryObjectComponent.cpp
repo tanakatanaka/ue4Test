@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "GameFramework/Controller.h"
 #include "../public/CarryObjectComponent.h"
 
 UCarryObjectComponent::UCarryObjectComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -19,6 +19,59 @@ bool UCarryObjectComponent::GetIsCarryingActor()
 	return GetChildComponent(0) != nullptr;
 }
 
+void UCarryObjectComponent::Pickup()
+{
+	/* Drop if we are already carrying an Actor */
+	if (GetIsCarryingActor())
+	{
+		Drop();
+		return;
+	}
+
+	if (GetOwner()->Role < ROLE_Authority)
+	{
+		//ServerPickup();
+		return;
+	}
+
+	AActor* FocusActor = GetActorInView();
+	OnPickupMulticast(FocusActor);
+}
+
+
+AActor* UCarryObjectComponent::GetActorInView()
+{
+	APawn* PawnOwner = Cast<APawn>(GetOwner());
+	AController* Controller = PawnOwner->Controller;
+	if (Controller == nullptr)
+	{
+		return nullptr;
+	}
+
+	FVector CamLoc;
+	FRotator CamRot;
+	Controller->GetPlayerViewPoint(CamLoc, CamRot);
+
+	const FVector TraceStart = CamLoc;
+	const FVector Direction = CamRot.Vector();
+	const FVector TraceEnd = TraceStart + (Direction * MaxPickupDistance);
+
+	FCollisionQueryParams TraceParams(TEXT("TraceActor"), true, PawnOwner);
+	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.bTraceComplex = false;
+
+	FHitResult Hit(ForceInit);
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+	/* Check to see if we hit a staticmesh component that has physics simulation enabled */
+	UStaticMeshComponent* MeshComp = Cast<UStaticMeshComponent>(Hit.GetComponent());
+	if (MeshComp && MeshComp->IsSimulatingPhysics())
+	{
+		return Hit.GetActor();
+	}
+
+	return nullptr;
+}
 
 void UCarryObjectComponent::Drop()
 {
@@ -27,8 +80,9 @@ void UCarryObjectComponent::Drop()
 	{
 		ServerDrop();
 	}
+	
+	OnDropMulticast();
 	*/
-	//OnDropMulticast();
 }
 
 AActor* UCarryObjectComponent::GetCarriedActor()
@@ -73,6 +127,24 @@ void UCarryObjectComponent::Throw()
 			/* Apply physics impulse, ignores mass */
 			MeshComp->AddImpulse(NewRotation.Vector() * 1000, NAME_None, true);
 		}
+	}
+}
+
+
+void UCarryObjectComponent::OnPickupMulticast_Implementation(AActor* FocusActor)
+{
+	if (FocusActor && FocusActor->IsRootComponentMovable())
+	{
+		/* Find the static mesh (if any) to disable physics simulation while carried
+		Filter by objects that are physically simulated and can therefor be picked up */
+		UStaticMeshComponent* MeshComp = Cast<UStaticMeshComponent>(FocusActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		if (MeshComp && MeshComp->IsSimulatingPhysics())
+		{
+			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			MeshComp->SetSimulatePhysics(false);
+		}
+
+		FocusActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
 	}
 }
 

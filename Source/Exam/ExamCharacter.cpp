@@ -83,7 +83,7 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AExamCharacter::LookUpAtRate);
 
 	// Interaction
-	//PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AExamCharacter::Use);
+	PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AExamCharacter::Use);
 	PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &AExamCharacter::DropWeapon);
 
 	// Weapons
@@ -100,6 +100,9 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AExamCharacter::OnResetVR);
+
+	/* Input binding for the carry object component */
+	PlayerInputComponent->BindAction("PickupObject", IE_Pressed, this, &AExamCharacter::OnToggleCarryActor);
 }
 
 bool AExamCharacter::IsTargeting() const
@@ -263,6 +266,49 @@ void AExamCharacter::DropWeapon()
 	}
 }
 
+/*
+Performs ray-trace to find closest looked-at UsableActor.
+*/
+AUsableActor* AExamCharacter::GetUsableInView()
+{
+	FVector CamLoc;
+	FRotator CamRot;
+
+	if (Controller == nullptr) return nullptr;
+
+	Controller->GetPlayerViewPoint(CamLoc, CamRot);
+	const FVector TraceStart = CamLoc;
+	const FVector Direction = CamRot.Vector();
+	const FVector TraceEnd = TraceStart + (Direction * MaxUseDistance);
+
+	FCollisionQueryParams TraceParams(TEXT("TraceUsableActor"), true, this);
+	TraceParams.bReturnPhysicalMaterial = false;
+
+	/* Not tracing complex uses the rough collision instead making tiny objects easier to select. */
+	TraceParams.bTraceComplex = false;
+
+	FHitResult Hit(ForceInit);
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f);
+
+	return Cast<AUsableActor>(Hit.GetActor());
+}
+
+void AExamCharacter::Use()
+{
+	// Only allow on server. If called on client push this request to the server
+	if (Role == ROLE_Authority)
+	{
+		AUsableActor* Usable = GetUsableInView();
+		if (Usable)
+		{
+			Usable->OnUsed(this);
+		}
+	}
+}
+
+
 void AExamCharacter::PawnClientRestart()
 {
 	Super::PawnClientRestart();
@@ -421,6 +467,12 @@ void AExamCharacter::StopWeaponFire()
 		}
 	}
 }
+
+void AExamCharacter::OnToggleCarryActor()
+{
+	CarriedObjectComp->Pickup();
+}
+
 
 UStaticMeshComponent* UCarryObjectComponent::GetCarriedMeshComp()
 {

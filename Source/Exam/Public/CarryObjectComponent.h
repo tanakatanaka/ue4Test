@@ -31,6 +31,11 @@ public:
 	void OnDropMulticast();
 	void OnDropMulticast_Implementation();
 
+	UFUNCTION(Reliable, NetMulticast)
+	void OnPickupMulticast(AActor* FocusActor);
+
+	void OnPickupMulticast_Implementation(AActor* FocusActor);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float RotateSpeed;
