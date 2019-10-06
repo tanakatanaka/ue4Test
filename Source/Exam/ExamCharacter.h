@@ -61,6 +61,9 @@ public:
 
 	bool WeaponSlotAvailable(EInventorySlot CheckSlot);
 
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+	void RestoreCondition(float HealthRestored, float HungerRestored);
+
 protected:
 
 	/* Character wants to run, checked during Tick to see if allowed */

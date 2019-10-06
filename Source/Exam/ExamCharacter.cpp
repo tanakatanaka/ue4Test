@@ -1,6 +1,7 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "ExamCharacter.h"
+#include "Public/ExamAttributeSet.h"
 #include "Public/ExamWeapon.h"
 #include "Public/CarryObjectComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
@@ -563,4 +564,15 @@ void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 FName AExamCharacter::GetInventoryAttachPoint(EInventorySlot Slot) const
 {
 	return AttributeSet->GetInventoryAttachPoint(Slot);
+}
+
+void AExamCharacter::RestoreCondition(float HealthRestored, float HungerRestored)
+{
+	AttributeSet->RestoreCondition(HealthRestored, HungerRestored);
+
+	UExamAttributeSet* PC = Cast<UExamAttributeSet>(Controller);
+	if (PC)
+	{
+		//PC->ClientHUDMessage(EHUDMessage::Character_EnergyRestored);
+	}
 }

@@ -22,6 +22,8 @@ public:
 	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
 	void Initialize(AExamCharacter* _owner);
 
+	void RestoreCondition(float HealthRestored, float HungerRestored);
+
 	UPROPERTY(Transient, Replicated)
 	TArray<AExamWeapon*> Inventory;
 
@@ -40,8 +42,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
 	float MoveSpeed;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Mana")
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	float Damage;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Hunger")
+	float Hunger;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Hunger")
+	float MaxHunger;
 
 	void AdjustAttributeForMaxChange();
 	void SetCurrentWeapon(class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);

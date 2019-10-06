@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "GameFramework/Controller.h"
+#include "../Public/ExamPlayerController.h"
 #include "../Public/ExamAttributeSet.h"
 #include "../Public/ExamWeapon.h"
 
@@ -17,6 +18,8 @@ void UExamAttributeSet::Initialize(AExamCharacter* _owner)
 	DefensePower = 1.f;
 	MoveSpeed = 1.f;
 	Damage = 1.f;
+	Hunger = 100.f;
+	MaxHunger = 100.f;
 
 	bIsEquipped = false;
 	bWantsToFire = false;
@@ -28,8 +31,6 @@ void UExamAttributeSet::Initialize(AExamCharacter* _owner)
 
 	Owner = _owner;
 }
-
-
 
 void UExamAttributeSet::AdjustAttributeForMaxChange()
 {
@@ -126,4 +127,13 @@ FName UExamAttributeSet::GetInventoryAttachPoint(EInventorySlot Slot) const
 void UExamAttributeSet::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+void UExamAttributeSet::RestoreCondition(float HealthRestored, float HungerRestored)
+{
+	// Reduce Hunger, ensure we do not go outside of our bounds
+	Hunger = FMath::Clamp(Hunger - HungerRestored, 0.0f, MaxHunger);
+
+	// Restore Hitpoints
+	Health = FMath::Clamp(Health + HealthRestored, 0.0f, MaxHealth);
 }
