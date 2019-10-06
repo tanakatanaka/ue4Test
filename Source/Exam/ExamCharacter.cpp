@@ -82,6 +82,10 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AExamCharacter::LookUpAtRate);
 
+
+	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, this, &AExamCharacter::OnNextWeapon);
+	PlayerInputComponent->BindAction("PrevWeapon", IE_Pressed, this, &AExamCharacter::OnPrevWeapon);
+
 	// Interaction
 	PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AExamCharacter::Use);
 	PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &AExamCharacter::DropWeapon);
@@ -294,6 +298,41 @@ AUsableActor* AExamCharacter::GetUsableInView()
 
 	return Cast<AUsableActor>(Hit.GetActor());
 }
+
+void AExamCharacter::OnNextWeapon()
+{
+	if (CarriedObjectComp->GetIsCarryingActor())
+	{
+		CarriedObjectComp->Rotate(0.0f, 1.0f);
+		return;
+	}
+
+	if (AttributeSet->Inventory.Num() >= 2) // TODO: Check for weaponstate.
+	{
+		const int32 CurrentWeaponIndex = AttributeSet->Inventory.IndexOfByKey(AttributeSet->CurrentWeapon);
+		AExamWeapon* NextWeapon = AttributeSet->Inventory[(CurrentWeaponIndex + 1) % AttributeSet->Inventory.Num()];
+		EquipWeapon(NextWeapon);
+	}
+}
+
+
+void AExamCharacter::OnPrevWeapon()
+{
+	if (CarriedObjectComp->GetIsCarryingActor())
+	{
+		CarriedObjectComp->Rotate(0.0f, -1.0f);
+		return;
+	}
+
+	if (AttributeSet->Inventory.Num() >= 2) // TODO: Check for weaponstate.
+	{
+		const int32 CurrentWeaponIndex = AttributeSet->Inventory.IndexOfByKey(AttributeSet->CurrentWeapon);
+		AExamWeapon* PrevWeapon = AttributeSet->Inventory[(CurrentWeaponIndex - 1 + AttributeSet->Inventory.Num()) % AttributeSet->Inventory.Num()];
+		EquipWeapon(PrevWeapon);
+	}
+}
+
+
 
 void AExamCharacter::Use()
 {

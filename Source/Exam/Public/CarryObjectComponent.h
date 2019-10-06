@@ -36,10 +36,19 @@ public:
 
 	void OnPickupMulticast_Implementation(AActor* FocusActor);
 
+	void Rotate(float DirectionYaw, float DirectionRoll);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void OnRotateMulticast(float DirectionYaw, float DirectionRoll);
+
+	void OnRotateMulticast_Implementation(float DirectionYaw, float DirectionRoll);
+
 protected:
+
+	void RotateActorAroundPoint(AActor* RotateActor, FVector RotationPoint, FRotator AddRotation);
+
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float RotateSpeed;
-
 
 private:
 

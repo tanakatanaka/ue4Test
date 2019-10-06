@@ -130,6 +130,16 @@ void UCarryObjectComponent::Throw()
 	}
 }
 
+void UCarryObjectComponent::Rotate(float DirectionYaw, float DirectionRoll)
+{
+	if (GetOwner()->Role < ROLE_Authority)
+	{
+		//ServerRotate(DirectionYaw, DirectionRoll);
+	}
+
+	OnRotateMulticast(DirectionYaw, DirectionRoll);
+}
+
 
 void UCarryObjectComponent::OnPickupMulticast_Implementation(AActor* FocusActor)
 {
@@ -165,4 +175,33 @@ void UCarryObjectComponent::OnDropMulticast_Implementation()
 		CarriedActor->GetRootComponent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	}
 #endif
+}
+
+void UCarryObjectComponent::OnRotateMulticast_Implementation(float DirectionYaw, float DirectionRoll)
+{
+	AActor* CarriedActor = GetCarriedActor();
+	if (CarriedActor)
+	{
+		/* Retrieve the object center */
+		FVector RootOrigin = GetCarriedActor()->GetRootComponent()->Bounds.Origin;
+		FRotator DeltaRot = FRotator(0, DirectionYaw * RotateSpeed, DirectionRoll * RotateSpeed);
+
+		RotateActorAroundPoint(CarriedActor, RootOrigin, DeltaRot);
+	}
+}
+
+void UCarryObjectComponent::RotateActorAroundPoint(AActor* RotateActor, FVector RotationPoint, FRotator AddRotation)
+{
+	FVector Loc = RotateActor->GetActorLocation() - RotationPoint;
+	FVector RotatedLoc = AddRotation.RotateVector(Loc);
+
+	FVector NewLoc = RotationPoint + RotatedLoc;
+
+	/* Compose the rotators, use Quats to avoid gimbal lock */
+	FQuat AQuat = FQuat(RotateActor->GetActorRotation());
+	FQuat BQuat = FQuat(AddRotation);
+
+	FRotator NewRot = FRotator(BQuat*AQuat);
+
+	RotateActor->SetActorLocationAndRotation(NewLoc, NewRot);
 }

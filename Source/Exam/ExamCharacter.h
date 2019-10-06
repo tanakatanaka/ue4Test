@@ -138,6 +138,8 @@ public:
 	void OnStartFire();
 	void OnStopFire();
 	void StartFire();
+	void OnNextWeapon();
+	void OnPrevWeapon();
 	void StopFire();
 	void OnStartTargeting();
 	void OnEndTargeting();
