@@ -36,21 +36,24 @@ struct FTakeHitInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY()
-		float ActualDamage;
+	UPROPERTY()
+	float ActualDamage;
 
 	UPROPERTY()
-		UClass* DamageTypeClass;
+	UClass* DamageTypeClass;
 
 
 	UPROPERTY()
-		TWeakObjectPtr<class AActor> DamageCauser;
+	TWeakObjectPtr<class ABaseCharacter> PawnInstigator;
 
 	UPROPERTY()
-		uint8 DamageEventClassID;
+	TWeakObjectPtr<class AActor> DamageCauser;
 
 	UPROPERTY()
-		bool bKilled;
+	uint8 DamageEventClassID;
+
+	UPROPERTY()
+	bool bKilled;
 
 private:
 

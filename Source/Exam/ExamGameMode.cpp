@@ -2,6 +2,7 @@
 
 #include "ExamGameMode.h"
 #include "ExamCharacter.h"
+#include "../public/BaseCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "ExamCharacter.h"
 #include "public/ExamWeapon.h"
@@ -20,6 +21,29 @@ AExamGameMode::AExamGameMode()
 
 	bSpawnAtTeamPlayer = true;
 }
+
+
+float AExamGameMode::ModifyDamage(float Damage, AActor* DamagedActor, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) const
+{
+	float ActualDamage = Damage;
+
+	ABaseCharacter* DamagedPawn = Cast<ABaseCharacter>(DamagedActor);
+	if (DamagedPawn && EventInstigator)
+	{
+		
+		//APlayerState* DamagedPlayerState = Cast<ASPlayerState>(DamagedPawn->GetPlayerState());
+		//ASPlayerState* InstigatorPlayerState = Cast<ASPlayerState>(EventInstigator->PlayerState);
+
+		// Check for friendly fire
+		//if (!CanDealDamage(InstigatorPlayerState, DamagedPlayerState))
+		{
+			ActualDamage = 0.f;
+		}
+	}
+
+	return ActualDamage;
+}
+
 
 void AExamGameMode::RestartPlayer(class AController* NewPlayer)
 {
@@ -125,4 +149,9 @@ void AExamGameMode::SpawnDefaultInventory(APawn* PlayerPawn)
 			}
 		}
 	}
+}
+
+void AExamGameMode::Killed(AController* Killer, AController* VictimPlayer, APawn* VictimPawn, const UDamageType* DamageType)
+{
+	// Do nothing (can we used to apply score or keep track of kill count)
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ExamTypes.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
@@ -12,10 +13,9 @@ class UExamAttributeSet;
 UCLASS()
 class EXAM_API ABaseCharacter : public ACharacter
 {
-	GENERATED_BODY()
-
 public:
-	// Sets default values for this character's properties
+	
+	GENERATED_BODY()
 	ABaseCharacter();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
@@ -47,6 +47,32 @@ public:
 	FRotator GetAimOffsets() const;
 
 protected:
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+
+	virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
+
+	virtual bool Die(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser);
+
+	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
+	
+	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
+	
+	void SetRagdollPhysics();
+
+	virtual void PlayHit(float DamageTaken, struct FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser, bool bKilled);
+
+	void ReplicateHit(float DamageTaken, struct FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser, bool bKilled);
+
+	UFUNCTION()
+	void OnRep_LastTakeHitInfo();
+
+	/* Holds hit data to replicate hits and death to clients */
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_LastTakeHitInfo)
+	struct FTakeHitInfo LastTakeHitInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float SprintingSpeedModifier;
+
 	UExamAttributeSet* AttributeSet;
 
 	/* Character wants to run, checked during Tick to see if allowed */
@@ -55,27 +81,7 @@ protected:
 
 	UPROPERTY(Transient, Replicated)
 	bool bIsTargeting;
+	
+	bool bIsDying;
 
-/*
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-
-	virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
-
-	virtual bool Die(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser);
-
-	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
-
-	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
-
-	void SetRagdollPhysics();
-
-	virtual void PlayHit(float DamageTaken, struct FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser, bool bKilled);
-
-	void ReplicateHit(float DamageTaken, struct FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser, bool bKilled);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float SprintingSpeedModifier;
-	UPROPERTY(Transient, Replicated)
-	bool bWantsToRun;
-*/
 };
