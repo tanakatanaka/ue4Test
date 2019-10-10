@@ -53,7 +53,7 @@ AExamCharacter::AExamCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
-	AttributeSet->Initialize(this);
+	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
 
 	CarriedObjectComp = CreateDefaultSubobject<UCarryObjectComponent>(TEXT("CarriedObjectComp"));
 	CarriedObjectComp->SetupAttachment(GetRootComponent());
@@ -64,7 +64,6 @@ AExamCharacter::AExamCharacter()
 
 //////////////////////////////////////////////////////////////////////////
 // Input
-
 void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up gameplay key bindings
@@ -103,16 +102,13 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &AExamCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &AExamCharacter::TouchStopped);
 
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AExamCharacter::OnResetVR);
-
 	/* Input binding for the carry object component */
 	PlayerInputComponent->BindAction("PickupObject", IE_Pressed, this, &AExamCharacter::OnToggleCarryActor);
 }
 
-bool AExamCharacter::IsTargeting() const
+void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	return bIsTargeting;
+	//Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 bool AExamCharacter::IsInitiatedJump() const
@@ -123,33 +119,6 @@ bool AExamCharacter::IsInitiatedJump() const
 bool AExamCharacter::IsFiring() const
 {
 	return AttributeSet->CurrentWeapon && AttributeSet->CurrentWeapon->GetCurrentState() == EWeaponState::Firing;
-}
-
-bool AExamCharacter::IsSprinting() const
-{
-	if (!GetCharacterMovement())
-	{
-		return false;
-	}
-
-	return bWantsToRun && !IsTargeting() && !GetVelocity().IsZero()
-		// Don't allow sprint while strafing sideways or standing still (1.0 is straight forward, -1.0 is backward while near 0 is sideways or standing still)
-		&& (FVector::DotProduct(GetVelocity().GetSafeNormal2D(), GetActorRotation().Vector()) > 0.8); // Changing this value to 0.1 allows for diagonal sprinting. (holding W+A or W+D keys)
-}
-
-FRotator AExamCharacter::GetAimOffsets() const
-{
-	const FVector AimDirWS = GetBaseAimRotation().Vector();
-	const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
-	const FRotator AimRotLS = AimDirLS.Rotation();
-
-	return AimRotLS;
-}
-
-
-void AExamCharacter::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
 void AExamCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -393,16 +362,6 @@ void AExamCharacter::EquipWeapon(AExamWeapon* Weapon)
 	}
 }
 
-float AExamCharacter::GetHealth() const
-{
-	return AttributeSet->Health;
-}
-
-float AExamCharacter::GetMaxHealth() const
-{
-	return AttributeSet->MaxHealth;
-}
-
 float AExamCharacter::GetMoveSpeed() const
 {
 	return AttributeSet->MoveSpeed;
@@ -545,21 +504,6 @@ bool AExamCharacter::WeaponSlotAvailable(EInventorySlot CheckSlot)
 	return true;
 }
 
-
-
-void AExamCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	/*
-		Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-		DOREPLIFETIME(ASWeapon, MyPawn);
-
-		DOREPLIFETIME_CONDITION(ASWeapon, CurrentAmmo, COND_OwnerOnly);
-		DOREPLIFETIME_CONDITION(ASWeapon, CurrentAmmoInClip, COND_OwnerOnly);
-		DOREPLIFETIME_CONDITION(ASWeapon, BurstCounter, COND_SkipOwner);
-		DOREPLIFETIME_CONDITION(ASWeapon, bPendingReload, COND_SkipOwner);
-	*/
-}
 
 FName AExamCharacter::GetInventoryAttachPoint(EInventorySlot Slot) const
 {

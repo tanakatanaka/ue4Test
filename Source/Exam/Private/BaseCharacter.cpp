@@ -13,8 +13,7 @@
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
-	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
-	//AttributeSet->Initialize(this);
+
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -6,13 +6,14 @@
 #include "GameFramework/Character.h"
 #include "../Public/ExamAttributeSet.h"
 #include "Camera/CameraComponent.h"
+#include "../Public/BaseCharacter.h"
 #include "ExamCharacter.generated.h"
 
 
 class UCarryObjectComponent;
 
 UCLASS(config=Game)
-class AExamCharacter : public ACharacter
+class AExamCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -46,15 +47,6 @@ public:
 		return FollowCamera;
 	}
 
-	/* Is player aiming down sights */
-	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	bool IsTargeting() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	FRotator GetAimOffsets() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual bool IsSprinting() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	bool IsInitiatedJump() const;
@@ -65,13 +57,6 @@ public:
 	void RestoreCondition(float HealthRestored, float HungerRestored);
 
 protected:
-
-	/* Character wants to run, checked during Tick to see if allowed */
-	UPROPERTY(Transient, Replicated)
-	bool bWantsToRun;
-
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -108,9 +93,6 @@ protected:
 	virtual void PawnClientRestart() override;
 
 
-	UPROPERTY(Transient, Replicated)
-	bool bIsTargeting;
-
 	void SetTargeting(bool NewTargeting);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
@@ -122,12 +104,6 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetHealth() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMoveSpeed() const;

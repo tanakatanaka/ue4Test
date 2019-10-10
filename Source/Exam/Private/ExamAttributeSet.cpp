@@ -10,7 +10,7 @@ UExamAttributeSet::UExamAttributeSet()
 	
 }
 
-void UExamAttributeSet::Initialize(AExamCharacter* _owner)
+void UExamAttributeSet::Initialize(ABaseCharacter* _owner)
 {
 	Health = 1.f;
 	MaxHealth = 1.f;
@@ -65,7 +65,7 @@ void UExamAttributeSet::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AEx
 
 	if (NewWeapon)
 	{
-		NewWeapon->SetOwningPawn(Owner);
+		NewWeapon->SetOwningPawn((AExamCharacter*)Owner);
 		NewWeapon->OnEquip(bHasPreviousWeapon);
 	}
 

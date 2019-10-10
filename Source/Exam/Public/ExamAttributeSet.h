@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ExamTypes.h"
+#include "BaseCharacter.h"
 #include "UObject/NoExportTypes.h"
 #include "ExamAttributeSet.generated.h"
 
@@ -20,6 +21,7 @@ class EXAM_API UExamAttributeSet : public UObject
 public:
 	UExamAttributeSet();
 	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
+	void Initialize(ABaseCharacter* _owner);
 	void Initialize(AExamCharacter* _owner);
 
 	void RestoreCondition(float HealthRestored, float HungerRestored);
@@ -77,5 +79,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName SpineAttachPoint;
 
-	AExamCharacter* Owner;
+	ABaseCharacter* Owner;
 };

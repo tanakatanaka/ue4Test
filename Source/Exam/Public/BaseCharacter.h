@@ -13,9 +13,8 @@ class UExamAttributeSet;
 UCLASS()
 class EXAM_API ABaseCharacter : public ACharacter
 {
-public:
-	
 	GENERATED_BODY()
+public:
 	ABaseCharacter();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
