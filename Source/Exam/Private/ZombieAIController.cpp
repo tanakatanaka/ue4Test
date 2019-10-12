@@ -19,6 +19,24 @@ AZombieAIController::AZombieAIController()
 	bWantsPlayerState = true;
 }
 
+void AZombieAIController::SetWaypoint(ABotWaypoint* NewWaypoint)
+{
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsObject(CurrentWaypointKeyName, NewWaypoint);
+	}
+}
+
+ABotWaypoint* AZombieAIController::GetWaypoint()
+{
+	if (BlackboardComp)
+	{
+		return Cast<ABotWaypoint>(BlackboardComp->GetValueAsObject(CurrentWaypointKeyName));
+	}
+
+	return nullptr;
+}
+
 void AZombieAIController::OnPossess(class APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

@@ -9,6 +9,7 @@
 #include "Components/AudioComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Perception/PawnSensingComponent.h"
+#include "ZombieAIController.h"
 #include "ZombieCharacter.generated.h"
 
 UCLASS()

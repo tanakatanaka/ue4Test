@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "BotWaypoint.h"
 #include "BaseCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
@@ -23,11 +24,11 @@ class EXAM_API AZombieAIController : public AAIController
 
 public:
 
-	//ASBotWaypoint* GetWaypoint();
+	ABotWaypoint* GetWaypoint();
 
 	ABaseCharacter* GetTargetEnemy();
 
-	//void SetWaypoint(ASBotWaypoint* NewWaypoint);
+	void SetWaypoint(ABotWaypoint* NewWaypoint);
 
 	void SetTargetEnemy(APawn* NewTarget);
 
