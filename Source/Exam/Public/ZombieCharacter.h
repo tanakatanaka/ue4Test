@@ -86,8 +86,8 @@ protected:
 
 
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "AI")
-	//class UPawnSensingComponent* PawnSensingComp;
+	UPROPERTY(VisibleAnywhere, Category = "AI")
+	class UPawnSensingComponent* PawnSensingComp;
 
 	/* Last time the player was spotted */
 	float LastSeenTime;

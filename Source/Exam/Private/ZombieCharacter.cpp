@@ -7,13 +7,11 @@
 // Sets default values
 AZombieCharacter::AZombieCharacter()
 {
-	/*
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComp"));
 	PawnSensingComp->SetPeripheralVisionAngle(60.0f);
 	PawnSensingComp->SightRadius = 2000;
 	PawnSensingComp->HearingThreshold = 600;
 	PawnSensingComp->LOSHearingThreshold = 1200;
-	*/
 }
 
 void AZombieCharacter::OnSeePlayer(APawn* Pawn)
