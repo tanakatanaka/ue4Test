@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameFramework/Actor.h"
+#include "Public/ExamAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "ZombieCharacter.h"
 
@@ -12,6 +13,9 @@ AZombieCharacter::AZombieCharacter()
 	PawnSensingComp->SightRadius = 2000;
 	PawnSensingComp->HearingThreshold = 600;
 	PawnSensingComp->LOSHearingThreshold = 1200;
+
+	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
+	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
 }
 
 void AZombieCharacter::OnSeePlayer(APawn* Pawn)
