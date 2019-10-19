@@ -1,7 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ZombieCharacter.h"
+
 #include "ZombieAIController.h"
+
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 AZombieAIController::AZombieAIController()
@@ -37,6 +41,23 @@ ABotWaypoint* AZombieAIController::GetWaypoint()
 	return nullptr;
 }
 
+
+void AZombieAIController::ForcedHold(AZombieCharacter* ZombieBot)
+{
+	if (ZombieBot)
+	{
+		if (ZombieBot->BehaviorTree->BlackboardAsset)
+		{
+			BlackboardComp->InitializeBlackboard(*ZombieBot->BehaviorTree->BlackboardAsset);
+
+			/* Make sure the Blackboard has the type of bot we possessed */
+			SetBlackboardBotType(ZombieBot->BotType);
+		}
+
+		BehaviorComp->StartTree(*ZombieBot->BehaviorTree);
+	}
+}
+
 void AZombieAIController::OnPossess(class APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -44,9 +65,9 @@ void AZombieAIController::OnPossess(class APawn* InPawn)
 	AZombieCharacter* ZombieBot = Cast<AZombieCharacter>(InPawn);
 	if (ZombieBot)
 	{
-		//if (ZombieBot->BehaviorTree->BlackboardAsset)
+		if (ZombieBot->BehaviorTree->BlackboardAsset)
 		{
-			//BlackboardComp->InitializeBlackboard(*ZombieBot->BehaviorTree->BlackboardAsset);
+			BlackboardComp->InitializeBlackboard(*ZombieBot->BehaviorTree->BlackboardAsset);
 
 			/* Make sure the Blackboard has the type of bot we possessed */
 			SetBlackboardBotType(ZombieBot->BotType);

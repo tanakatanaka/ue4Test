@@ -6,12 +6,13 @@
 #include "AIController.h"
 #include "BotWaypoint.h"
 #include "BaseCharacter.h"
+#include "ZombieCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "ZombieAIController.generated.h"
 
-
+class AZombieCharacter;
 class UBehaviorTreeComponent;
 
 /**
@@ -33,6 +34,8 @@ public:
 	void SetTargetEnemy(APawn* NewTarget);
 
 	void SetBlackboardBotType(EBotBehaviorType NewType);
+	
+	void ForcedHold(AZombieCharacter* ZombieBot);
 
 	/** Returns BehaviorComp subobject **/
 	FORCEINLINE UBehaviorTreeComponent* GetBehaviorComp() const { return BehaviorComp; }

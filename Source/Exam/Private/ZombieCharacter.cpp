@@ -1,8 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+#include "TimerManager.h"
 #include "GameFramework/Actor.h"
 #include "Public/ExamAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
+#include "ZombieAIController.h"
 #include "ZombieCharacter.h"
 
 // Sets default values
@@ -16,6 +17,60 @@ AZombieCharacter::AZombieCharacter()
 
 	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
 	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
+
+	MyAI = CreateDefaultSubobject<AZombieAIController>(TEXT("ZombieAIController"));
+	//MyAI->ForcedHold(this);
+}
+
+void AZombieCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	/* This is the earliest moment we can bind our delegates to the component */
+	if (PawnSensingComp)
+	{
+		PawnSensingComp->OnSeePawn.AddDynamic(this, &AZombieCharacter::OnSeePlayer);
+		PawnSensingComp->OnHearNoise.AddDynamic(this, &AZombieCharacter::OnHearNoise);
+	}
+	if (MeleeCollisionComp)
+	{
+		MeleeCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnMeleeCompBeginOverlap);
+	}
+
+	//BroadcastUpdateAudioLoop(bSensedTarget);
+
+	/* Assign a basic name to identify the bots in the HUD. */
+	/*
+	APlayerState* PS = Cast<APlayerState>(GetPlayerState());
+	if (PS)
+	{
+		PS->SetPlayerName("Bot");
+		PS->bIsABot = true;
+	}
+	*/
+}
+
+void AZombieCharacter::Tick(float DeltaSeconds)
+{
+	return;
+
+	Super::Tick(DeltaSeconds);
+
+	/* Check if the last time we sensed a player is beyond the time out value to prevent bot from endlessly following a player. */
+	//if (bSensedTarget && (GetWorld()->TimeSeconds - LastSeenTime) > SenseTimeOut
+	//	&& (GetWorld()->TimeSeconds - LastHeardTime) > SenseTimeOut)
+	{
+		AZombieAIController* AIController = Cast<AZombieAIController>(GetController());
+		if (AIController)
+		{
+			bSensedTarget = false;
+			AIController->SetTargetEnemy(nullptr);
+
+
+			/* Stop playing the hunting sound */
+			//BroadcastUpdateAudioLoop(false);
+		}
+	}
 }
 
 void AZombieCharacter::OnSeePlayer(APawn* Pawn)
@@ -114,6 +169,42 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 	}
 #endif
 }
+
+
+
+void AZombieCharacter::OnMeleeCompBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	/* Stop any running attack timers */
+	TimerHandle_MeleeAttack.Invalidate();
+
+	PerformMeleeStrike(OtherActor);
+
+	/* Set re-trigger timer to re-check overlapping pawns at melee attack rate interval */
+	GetWorldTimerManager().SetTimer(TimerHandle_MeleeAttack, this, &AZombieCharacter::OnRetriggerMeleeStrike, MeleeStrikeCooldown, true);
+}
+
+void AZombieCharacter::OnRetriggerMeleeStrike()
+{
+	/* Apply damage to a single random pawn in range. */
+	TArray<AActor*> Overlaps;
+	MeleeCollisionComp->GetOverlappingActors(Overlaps, ABaseCharacter::StaticClass());
+	for (int32 i = 0; i < Overlaps.Num(); i++)
+	{
+		ABaseCharacter* OverlappingPawn = Cast<ABaseCharacter>(Overlaps[i]);
+		if (OverlappingPawn)
+		{
+			PerformMeleeStrike(OverlappingPawn);
+			//break; /* Uncomment to only attack one pawn maximum */
+		}
+	}
+
+	/* No pawns in range, cancel the retrigger timer */
+	if (Overlaps.Num() == 0)
+	{
+		TimerHandle_MeleeAttack.Invalidate();
+	}
+}
+
 
 void AZombieCharacter::SetBotType(EBotBehaviorType NewType)
 {

@@ -9,8 +9,9 @@
 #include "Components/AudioComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Perception/PawnSensingComponent.h"
-#include "ZombieAIController.h"
 #include "ZombieCharacter.generated.h"
+
+class AZombieAIController;
 
 UCLASS()
 class EXAM_API AZombieCharacter : public ABaseCharacter
@@ -20,7 +21,6 @@ class EXAM_API AZombieCharacter : public ABaseCharacter
 public:
 	// Sets default values for this character's properties
 	AZombieCharacter();
-	
 	
 	UPROPERTY(BlueprintReadWrite, Category = "Attacking")
 	bool bIsPunching;
@@ -39,12 +39,19 @@ public:
 
 protected:
 	
+	UPROPERTY(VisibleAnywhere, Category = "Attacking")
+	UCapsuleComponent* MeleeCollisionComp;
+
 	UFUNCTION()
 	void OnSeePlayer(APawn* Pawn);
 
 	UFUNCTION()
 	void OnHearNoise(APawn* PawnInstigator, const FVector& Location, float Volume);
 
+	UFUNCTION()
+	void OnMeleeCompBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	void OnRetriggerMeleeStrike();
 
 	UAudioComponent* PlayCharacterSound(USoundCue* CueToPlay);
 
@@ -86,6 +93,12 @@ protected:
 
 
 private:
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	AZombieAIController* MyAI;
+
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	class UPawnSensingComponent* PawnSensingComp;
 
