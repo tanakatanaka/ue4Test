@@ -34,8 +34,6 @@ public:
 	void SetTargetEnemy(APawn* NewTarget);
 
 	void SetBlackboardBotType(EBotBehaviorType NewType);
-	
-	void ForcedHold(AZombieCharacter* ZombieBot);
 
 	/** Returns BehaviorComp subobject **/
 	FORCEINLINE UBehaviorTreeComponent* GetBehaviorComp() const { return BehaviorComp; }

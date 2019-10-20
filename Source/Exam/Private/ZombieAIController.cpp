@@ -41,26 +41,6 @@ ABotWaypoint* AZombieAIController::GetWaypoint()
 	return nullptr;
 }
 
-
-void AZombieAIController::ForcedHold(AZombieCharacter* ZombieBot)
-{
-	return;
-#if 0
-	if (ZombieBot)
-	{
-		if (ZombieBot->BehaviorTree->BlackboardAsset)
-		{
-			BlackboardComp->InitializeBlackboard(*ZombieBot->BehaviorTree->BlackboardAsset);
-
-			/* Make sure the Blackboard has the type of bot we possessed */
-			SetBlackboardBotType(ZombieBot->BotType);
-		}
-
-		BehaviorComp->StartTree(*ZombieBot->BehaviorTree);
-	}
-#endif
-}
-
 void AZombieAIController::OnPossess(class APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
