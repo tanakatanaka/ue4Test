@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#include "BaseCharacter.h"
 #include "Public/ExamAttributeSet.h"
 #include "GameFramework/DamageType.h"
 #include "../ExamGameMode.h"
@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-#include "BaseCharacter.h"
+
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()

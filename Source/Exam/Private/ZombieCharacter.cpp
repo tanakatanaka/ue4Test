@@ -1,10 +1,10 @@
+#include "ZombieCharacter.h"
 #include "TimerManager.h"
 #include "GameFramework/Actor.h"
 #include "Public/ExamAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "ZombieAIController.h"
-#include "ZombieCharacter.h"
 
 // Sets default values
 AZombieCharacter::AZombieCharacter()
@@ -17,9 +17,6 @@ AZombieCharacter::AZombieCharacter()
 
 	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
 	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
-
-	MyAI = CreateDefaultSubobject<AZombieAIController>(TEXT("ZombieAIController"));
-	//MyAI->ForcedHold(this);
 }
 
 void AZombieCharacter::BeginPlay()

@@ -1,5 +1,6 @@
-#include "ExamCharacter.h"
 #include "ConsumableActor.h"
+#include "ExamCharacter.h"
+
 
 // Sets default values
 AConsumableActor::AConsumableActor()

@@ -1,7 +1,7 @@
+#include "WeaponPickup.h"
 #include "../ExamCharacter.h"
 #include "ExamWeapon.h"
 #include "ExamPlayerController.h"
-#include "WeaponPickup.h"
 
 // Sets default values
 AWeaponPickup::AWeaponPickup()

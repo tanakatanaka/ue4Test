@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
+#include "PickupActor.h"
 #include "../ExamCharacter.h"
 #include "ExamWeapon.h"
-#include "PickupActor.h"
 #include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"

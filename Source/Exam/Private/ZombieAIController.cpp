@@ -44,6 +44,8 @@ ABotWaypoint* AZombieAIController::GetWaypoint()
 
 void AZombieAIController::ForcedHold(AZombieCharacter* ZombieBot)
 {
+	return;
+#if 0
 	if (ZombieBot)
 	{
 		if (ZombieBot->BehaviorTree->BlackboardAsset)
@@ -56,6 +58,7 @@ void AZombieAIController::ForcedHold(AZombieCharacter* ZombieBot)
 
 		BehaviorComp->StartTree(*ZombieBot->BehaviorTree);
 	}
+#endif
 }
 
 void AZombieAIController::OnPossess(class APawn* InPawn)

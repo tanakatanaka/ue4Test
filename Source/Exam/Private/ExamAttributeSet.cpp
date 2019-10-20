@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#include "../Public/ExamAttributeSet.h"
 #include "GameFramework/Controller.h"
 #include "../Public/ExamPlayerController.h"
-#include "../Public/ExamAttributeSet.h"
 #include "../Public/ExamWeapon.h"
 
 UExamAttributeSet::UExamAttributeSet()

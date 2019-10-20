@@ -11,7 +11,6 @@
 #include "Perception/PawnSensingComponent.h"
 #include "ZombieCharacter.generated.h"
 
-class AZombieAIController;
 
 UCLASS()
 class EXAM_API AZombieCharacter : public ABaseCharacter
@@ -96,8 +95,6 @@ private:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
-
-	AZombieAIController* MyAI;
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	class UPawnSensingComponent* PawnSensingComp;
