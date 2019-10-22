@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ExamTypes.h"
+#include "ETypes.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 

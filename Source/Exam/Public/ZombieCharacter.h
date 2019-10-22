@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
-#include "ExamTypes.h"
+#include "ETypes.h"
 #include "GameFramework/Character.h"
 #include "Components/AudioComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ExamTypes.h"
+#include "ETypes.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "ExamWeapon.generated.h"
 

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "ExamTypes.generated.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
+#include "ETypes.generated.h"
 
 UENUM()
 enum class EInventorySlot : uint8
@@ -30,30 +30,37 @@ enum class EBotBehaviorType : uint8
 	Patrolling,
 };
 
+UCLASS()
+class EXAM_API UETypes : public UBehaviorTreeTypes
+{
+	GENERATED_BODY()
+
+	EBotBehaviorType botType;
+};
 
 USTRUCT()
 struct FTakeHitInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
-	float ActualDamage;
+		UPROPERTY()
+		float ActualDamage;
 
 	UPROPERTY()
-	UClass* DamageTypeClass;
+		UClass* DamageTypeClass;
 
 
 	UPROPERTY()
-	TWeakObjectPtr<class ABaseCharacter> PawnInstigator;
+		TWeakObjectPtr<class ABaseCharacter> PawnInstigator;
 
 	UPROPERTY()
-	TWeakObjectPtr<class AActor> DamageCauser;
+		TWeakObjectPtr<class AActor> DamageCauser;
 
 	UPROPERTY()
-	uint8 DamageEventClassID;
+		uint8 DamageEventClassID;
 
 	UPROPERTY()
-	bool bKilled;
+		bool bKilled;
 
 private:
 

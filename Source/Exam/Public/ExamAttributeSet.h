@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ExamTypes.h"
+#include "ETypes.h"
 #include "BaseCharacter.h"
 #include "UObject/NoExportTypes.h"
 #include "ExamAttributeSet.generated.h"
