@@ -95,10 +95,6 @@ protected:
 
 	void SetTargeting(bool NewTargeting);
 
-	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-	float TargetingSpeedModifier;
-
-
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -108,6 +104,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMoveSpeed() const;
 	
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	void MakePawnNoise(float Loudness);
+
 	void AddWeapon(class AExamWeapon* Weapon);
 
 	bool CanFire() const;
@@ -148,5 +147,9 @@ private:
 	float DropWeaponMaxDistance;
 	
 	UStaticMeshComponent* GetCarriedMeshComp();
+
+	float LastNoiseLoudness;
+
+	float LastMakeNoiseTime;
 };
 

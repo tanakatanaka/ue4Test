@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "ETypes.h"
 #include "GameFramework/Character.h"
+#include "Components/PawnNoiseEmitterComponent.h"
 #include "BaseCharacter.generated.h"
 
 class USoundCue;
 class UExamAttributeSet;
 
-UCLASS()
+UCLASS(ABSTRACT)
 class EXAM_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -69,6 +70,9 @@ protected:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_LastTakeHitInfo)
 	struct FTakeHitInfo LastTakeHitInfo;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetingSpeedModifier;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float SprintingSpeedModifier;
 
@@ -83,4 +87,6 @@ protected:
 	
 	bool bIsDying;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPawnNoiseEmitterComponent* NoiseEmitterComp;
 };

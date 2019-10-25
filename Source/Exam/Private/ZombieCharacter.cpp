@@ -6,6 +6,9 @@
 #include "Components/CapsuleComponent.h"
 #include "ZombieAIController.h"
 
+#include "../Exam.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 AZombieCharacter::AZombieCharacter()
 {
@@ -14,6 +17,23 @@ AZombieCharacter::AZombieCharacter()
 	PawnSensingComp->SightRadius = 2000;
 	PawnSensingComp->HearingThreshold = 600;
 	PawnSensingComp->LOSHearingThreshold = 1200;
+
+	/* Ignore this channel or it will absorb the trace impacts instead of the skeletal mesh */
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
+	GetCapsuleComponent()->SetCapsuleHalfHeight(96.0f, false);
+	GetCapsuleComponent()->SetCapsuleRadius(42.0f);
+
+	/* These values are matched up to the CapsuleComponent above and are used to find navigation paths */
+	GetMovementComponent()->NavAgentProps.AgentRadius = 42;
+	GetMovementComponent()->NavAgentProps.AgentHeight = 192;
+
+	MeleeCollisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("MeleeCollision"));
+	MeleeCollisionComp->SetRelativeLocation(FVector(45, 0, 25));
+	MeleeCollisionComp->SetCapsuleHalfHeight(60);
+	MeleeCollisionComp->SetCapsuleRadius(35, false);
+	MeleeCollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	MeleeCollisionComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	MeleeCollisionComp->SetupAttachment(GetCapsuleComponent());
 
 	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
 	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
@@ -38,7 +58,7 @@ void AZombieCharacter::BeginPlay()
 
 	/* Assign a basic name to identify the bots in the HUD. */
 	/*
-	APlayerState* PS = Cast<APlayerState>(GetPlayerState());
+	AExamPlayerState* PS = Cast<APlayerState>(GetPlayerState());
 	if (PS)
 	{
 		PS->SetPlayerName("Bot");
@@ -77,23 +97,21 @@ void AZombieCharacter::OnSeePlayer(APawn* Pawn)
 		return;
 	}
 
-#if 0
 	if (!bSensedTarget)
 	{
-		BroadcastUpdateAudioLoop(true);
+		//BroadcastUpdateAudioLoop(true);
 	}
 
 	/* Keep track of the time the player was last sensed in order to clear the target */
 	LastSeenTime = GetWorld()->GetTimeSeconds();
 	bSensedTarget = true;
 
-	//AZombieAIController* AIController = Cast<AZombieAIController>(GetController());
+	AZombieAIController* AIController = Cast<AZombieAIController>(GetController());
 	ABaseCharacter* SensedPawn = Cast<ABaseCharacter>(Pawn);
 	if (AIController && SensedPawn->IsAlive())
 	{
 		AIController->SetTargetEnemy(SensedPawn);
 	}
-#endif
 }
 
 void AZombieCharacter::OnHearNoise(APawn* PawnInstigator, const FVector& Location, float Volume)
@@ -102,27 +120,25 @@ void AZombieCharacter::OnHearNoise(APawn* PawnInstigator, const FVector& Locatio
 	{
 		return;
 	}
-#if 0
+
 	if (!bSensedTarget)
 	{
-		BroadcastUpdateAudioLoop(true);
+		//BroadcastUpdateAudioLoop(true);
 	}
 
 	bSensedTarget = true;
 	LastHeardTime = GetWorld()->GetTimeSeconds();
 
-	ASZombieAIController* AIController = Cast<ASZombieAIController>(GetController());
+	AZombieAIController* AIController = Cast<AZombieAIController>(GetController());
 	if (AIController)
 	{
 		AIController->SetTargetEnemy(PawnInstigator);
 	}
-#endif
 }
 
 
 void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 {
-#if 0
 	if (LastMeleeAttackTime > GetWorld()->GetTimeSeconds() - MeleeStrikeCooldown)
 	{
 		/* Set timer to start attacking as soon as the cooldown elapses. */
@@ -140,15 +156,15 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 		ACharacter* OtherPawn = Cast<ACharacter>(HitActor);
 		if (OtherPawn)
 		{
-			APlayerState* MyPS = Cast<APlayerState>(GetPlayerState());
-			APlayerState* OtherPS = Cast<APlayerState>(OtherPawn->GetPlayerState());
+			//APlayerState* MyPS = Cast<APlayerState>(GetPlayerState());
+			//APlayerState* OtherPS = Cast<APlayerState>(OtherPawn->GetPlayerState());
 
-			if (MyPS && OtherPS)
+			//if (MyPS && OtherPS)
 			{
-				if (MyPS->GetTeamNumber() == OtherPS->GetTeamNumber())
+				//if (MyPS->GetTeamNumber() == OtherPS->GetTeamNumber())
 				{
 					/* Do not attack other zombies. */
-					return;
+					//return;
 				}
 
 				/* Set to prevent a zombie to attack multiple times in a very short time */
@@ -160,11 +176,10 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 
 				HitActor->TakeDamage(DmgEvent.Damage, DmgEvent, GetController(), this);
 
-				SimulateMeleeStrike();
+				//SimulateMeleeStrike();
 			}
 		}
 	}
-#endif
 }
 
 

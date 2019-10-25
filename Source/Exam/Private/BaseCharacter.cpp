@@ -13,6 +13,11 @@
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
+	TargetingSpeedModifier = 0.5f;
+	SprintingSpeedModifier = 2.0f;
+
+	/* Noise emitter for both players and enemies. This keeps track of MakeNoise data and is used by the pawnsensing component in our SZombieCharacter class */
+	NoiseEmitterComp = CreateDefaultSubobject<UPawnNoiseEmitterComponent>(TEXT("NoiseEmitterComp"));
 
 }
 

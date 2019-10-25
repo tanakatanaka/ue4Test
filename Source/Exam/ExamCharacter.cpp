@@ -405,6 +405,18 @@ void AExamCharacter::OnStartFire()
 	StartFire();
 }
 
+void AExamCharacter::MakePawnNoise(float Loudness)
+{
+	if (Role == ROLE_Authority)
+	{
+		/* Make noise to be picked up by PawnSensingComponent by the enemy pawns */
+		MakeNoise(Loudness, this, GetActorLocation());
+	}
+
+	LastNoiseLoudness = Loudness;
+	LastMakeNoiseTime = GetWorld()->GetTimeSeconds();
+}
+
 void AExamCharacter::OnStopFire()
 {
 	StopFire();
