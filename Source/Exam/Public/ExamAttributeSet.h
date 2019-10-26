@@ -22,7 +22,6 @@ public:
 	UExamAttributeSet();
 	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
 	void Initialize(ABaseCharacter* _owner);
-	void Initialize(AExamCharacter* _owner);
 
 	void RestoreCondition(float HealthRestored, float HungerRestored);
 

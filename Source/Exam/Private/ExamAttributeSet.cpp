@@ -6,20 +6,18 @@
 
 UExamAttributeSet::UExamAttributeSet()
 {
-	
-}
-
-void UExamAttributeSet::Initialize(ABaseCharacter* _owner)
-{
-	Health = 1.f;
-	MaxHealth = 1.f;
+	Health = 10000.f;
+	MaxHealth = 10000.f;
 	AttackPower = 1.f;
 	DefensePower = 1.f;
 	MoveSpeed = 1.f;
 	Damage = 1.f;
 	Hunger = 100.f;
 	MaxHunger = 100.f;
+}
 
+void UExamAttributeSet::Initialize(ABaseCharacter* _owner)
+{
 	bIsEquipped = false;
 	bWantsToFire = false;
 
