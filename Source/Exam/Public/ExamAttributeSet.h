@@ -20,13 +20,8 @@ class EXAM_API UExamAttributeSet : public UObject
 	GENERATED_BODY()
 public:
 	UExamAttributeSet();
-	//void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue
-	void Initialize(ABaseCharacter* _owner);
 
 	void RestoreCondition(float HealthRestored, float HungerRestored);
-
-	UPROPERTY(Transient, Replicated)
-	TArray<AExamWeapon*> Inventory;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	float Health;
@@ -53,30 +48,10 @@ public:
 	float MaxHunger;
 
 	void AdjustAttributeForMaxChange();
-	void SetCurrentWeapon(class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
-	void RemoveWeapon(bool bDestroy);
-	FName GetInventoryAttachPoint(EInventorySlot Slot) const;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	bool bIsEquipped;
 	bool bWantsToFire;
 
-	class AExamWeapon* PreviousWeapon;
-	class AExamWeapon* CurrentWeapon;
-
-private:
-	/* Attachpoint for active weapon/item in hands */
-	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
-	FName WeaponAttachPoint;
-
-	/* Attachpoint for items carried on the belt/pelvis. */
-	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
-	FName PelvisAttachPoint;
-
-	/* Attachpoint for primary weapons */
-	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
-	FName SpineAttachPoint;
-
-	ABaseCharacter* Owner;
 };

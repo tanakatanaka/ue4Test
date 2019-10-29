@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "../Public/ExamAttributeSet.h"
 #include "Camera/CameraComponent.h"
 #include "../Public/BaseCharacter.h"
 #include "ExamCharacter.generated.h"
 
-
+class AExamWeapon;
 class UCarryObjectComponent;
 
 UCLASS(config=Game)
@@ -55,6 +54,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	void RestoreCondition(float HealthRestored, float HungerRestored);
+
+	void SetCurrentWeapon(class AExamWeapon* newWeapon, class AExamWeapon* LastWeapon = nullptr);
+
+	void RemoveWeapon(class AExamWeapon* Weapon, bool bDestroy);
+
+	class AExamWeapon* PreviousWeapon;
+	class AExamWeapon* CurrentWeapon;
+
+	UPROPERTY(Transient, Replicated)
+	TArray<AExamWeapon*> Inventory;
 
 protected:
 
@@ -151,5 +160,17 @@ private:
 	float LastNoiseLoudness;
 
 	float LastMakeNoiseTime;
+
+	/* Attachpoint for active weapon/item in hands */
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName WeaponAttachPoint;
+
+	/* Attachpoint for items carried on the belt/pelvis. */
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName PelvisAttachPoint;
+
+	/* Attachpoint for primary weapons */
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName SpineAttachPoint;
 };
 

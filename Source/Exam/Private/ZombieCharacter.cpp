@@ -1,4 +1,5 @@
 #include "ZombieCharacter.h"
+#include "../ExamCharacter.h"
 #include "TimerManager.h"
 #include "GameFramework/Actor.h"
 #include "Public/ExamAttributeSet.h"
@@ -35,8 +36,10 @@ AZombieCharacter::AZombieCharacter()
 	MeleeCollisionComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	MeleeCollisionComp->SetupAttachment(GetCapsuleComponent());
 
-	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
-	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
+	if (!AttributeSet)
+	{
+		AttributeSet = NewObject< UExamAttributeSet >();
+	}
 }
 
 void AZombieCharacter::BeginPlay()
@@ -107,7 +110,7 @@ void AZombieCharacter::OnSeePlayer(APawn* Pawn)
 	bSensedTarget = true;
 
 	AZombieAIController* AIController = Cast<AZombieAIController>(GetController());
-	ABaseCharacter* SensedPawn = Cast<ABaseCharacter>(Pawn);
+	AExamCharacter* SensedPawn = Cast<AExamCharacter>(Pawn);
 	if (AIController && SensedPawn->IsAlive())
 	{
 		AIController->SetTargetEnemy(SensedPawn);
@@ -153,7 +156,7 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 
 	if (HitActor && HitActor != this && IsAlive())
 	{
-		ACharacter* OtherPawn = Cast<ACharacter>(HitActor);
+		AExamCharacter* OtherPawn = Cast<AExamCharacter>(HitActor);
 		if (OtherPawn)
 		{
 			//APlayerState* MyPS = Cast<APlayerState>(GetPlayerState());

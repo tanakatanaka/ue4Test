@@ -8,8 +8,8 @@
 #include "Components/PawnNoiseEmitterComponent.h"
 #include "BaseCharacter.generated.h"
 
-class USoundCue;
 class UExamAttributeSet;
+class USoundCue;
 
 UCLASS(ABSTRACT)
 class EXAM_API ABaseCharacter : public ACharacter
@@ -76,8 +76,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float SprintingSpeedModifier;
 
-	UExamAttributeSet* AttributeSet;
-
 	/* Character wants to run, checked during Tick to see if allowed */
 	UPROPERTY(Transient, Replicated)
 	bool bWantsToRun;
@@ -87,6 +85,8 @@ protected:
 	
 	bool bIsDying;
 
+	UExamAttributeSet* AttributeSet;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UPawnNoiseEmitterComponent* NoiseEmitterComp;
+	UPawnNoiseEmitterComponent* NoiseEmitterComp; 
 };

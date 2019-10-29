@@ -52,14 +52,21 @@ AExamCharacter::AExamCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
-	AttributeSet->Initialize(Cast<ABaseCharacter>(this));
-
 	CarriedObjectComp = CreateDefaultSubobject<UCarryObjectComponent>(TEXT("CarriedObjectComp"));
 	CarriedObjectComp->SetupAttachment(GetRootComponent());
 
 	bWantsToRun = false;
 	bIsJumping = false;
+
+	/* Names as specified in the character skeleton */
+	WeaponAttachPoint = TEXT("WeaponSocket");
+	PelvisAttachPoint = TEXT("PelvisSocket");
+	SpineAttachPoint = TEXT("SpineSocket");
+
+	if (!AttributeSet)
+	{
+		AttributeSet = NewObject< UExamAttributeSet >();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,7 +125,7 @@ bool AExamCharacter::IsInitiatedJump() const
 
 bool AExamCharacter::IsFiring() const
 {
-	return AttributeSet->CurrentWeapon && AttributeSet->CurrentWeapon->GetCurrentState() == EWeaponState::Firing;
+	return CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Firing;
 }
 
 void AExamCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -180,7 +187,7 @@ void AExamCharacter::DropWeapon()
 		return;
 	}
 
-	if (AttributeSet->CurrentWeapon)
+	if (CurrentWeapon)
 	{
 		FVector CamLoc;
 		FRotator CamRot;
@@ -223,7 +230,7 @@ void AExamCharacter::DropWeapon()
 		/* Spawn the "dropped" weapon */
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AWeaponPickup* NewWeaponPickup = GetWorld()->SpawnActor<AWeaponPickup>(AttributeSet->CurrentWeapon->WeaponPickupClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+		AWeaponPickup* NewWeaponPickup = GetWorld()->SpawnActor<AWeaponPickup>(CurrentWeapon->WeaponPickupClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
 
 		if (NewWeaponPickup)
 		{
@@ -236,7 +243,7 @@ void AExamCharacter::DropWeapon()
 			}
 		}
 
-		AttributeSet->RemoveWeapon(true);
+		RemoveWeapon(CurrentWeapon, true);
 	}
 }
 
@@ -277,10 +284,10 @@ void AExamCharacter::OnNextWeapon()
 		return;
 	}
 
-	if (AttributeSet->Inventory.Num() >= 2) // TODO: Check for weaponstate.
+	if (Inventory.Num() >= 2) // TODO: Check for weaponstate.
 	{
-		const int32 CurrentWeaponIndex = AttributeSet->Inventory.IndexOfByKey(AttributeSet->CurrentWeapon);
-		AExamWeapon* NextWeapon = AttributeSet->Inventory[(CurrentWeaponIndex + 1) % AttributeSet->Inventory.Num()];
+		const int32 CurrentWeaponIndex = Inventory.IndexOfByKey(CurrentWeapon);
+		AExamWeapon* NextWeapon = Inventory[(CurrentWeaponIndex + 1) % Inventory.Num()];
 		EquipWeapon(NextWeapon);
 	}
 }
@@ -294,10 +301,10 @@ void AExamCharacter::OnPrevWeapon()
 		return;
 	}
 
-	if (AttributeSet->Inventory.Num() >= 2) // TODO: Check for weaponstate.
+	if (Inventory.Num() >= 2) // TODO: Check for weaponstate.
 	{
-		const int32 CurrentWeaponIndex = AttributeSet->Inventory.IndexOfByKey(AttributeSet->CurrentWeapon);
-		AExamWeapon* PrevWeapon = AttributeSet->Inventory[(CurrentWeaponIndex - 1 + AttributeSet->Inventory.Num()) % AttributeSet->Inventory.Num()];
+		const int32 CurrentWeaponIndex = Inventory.IndexOfByKey(CurrentWeapon);
+		AExamWeapon* PrevWeapon = Inventory[(CurrentWeaponIndex - 1 + Inventory.Num()) % Inventory.Num()];
 		EquipWeapon(PrevWeapon);
 	}
 }
@@ -322,7 +329,7 @@ void AExamCharacter::PawnClientRestart()
 {
 	Super::PawnClientRestart();
 
-	AttributeSet->SetCurrentWeapon(AttributeSet->CurrentWeapon);
+	SetCurrentWeapon(CurrentWeapon);
 }
 
 void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
@@ -330,14 +337,14 @@ void AExamCharacter::AddWeapon(class AExamWeapon* Weapon)
 	if (Weapon && Role == ROLE_Authority)
 	{
 		Weapon->OnEnterInventory(this);
-		AttributeSet->Inventory.AddUnique(Weapon);
+		Inventory.AddUnique(Weapon);
 
 		// Equip first weapon in inventory
-		if (AttributeSet->Inventory.Num() > 0 && AttributeSet->CurrentWeapon == nullptr)
+		if (Inventory.Num() > 0 && CurrentWeapon == nullptr)
 		{
-			if (AttributeSet->Inventory.Num() < 2)
+			if (Inventory.Num() < 2)
 			{
-				EquipWeapon(AttributeSet->Inventory[0]);
+				EquipWeapon(Inventory[0]);
 			}
 		}
 	}
@@ -349,11 +356,11 @@ void AExamCharacter::EquipWeapon(AExamWeapon* Weapon)
 	if (Weapon)
 	{
 		/* Ignore if trying to equip already equipped weapon */
-		if (Weapon == AttributeSet->CurrentWeapon) return;
+		if (Weapon == CurrentWeapon) return;
 
 		if (Role == ROLE_Authority)
 		{
-			AttributeSet->SetCurrentWeapon(Weapon, AttributeSet->CurrentWeapon);
+			SetCurrentWeapon(Weapon, CurrentWeapon);
 		}
 		else
 		{
@@ -427,9 +434,9 @@ void AExamCharacter::StartFire()
 	if (false == AttributeSet->bWantsToFire)
 	{
 		AttributeSet->bWantsToFire = true;
-		if (AttributeSet->CurrentWeapon)
+		if (CurrentWeapon)
 		{
-			AttributeSet->CurrentWeapon->StartFire();
+			CurrentWeapon->StartFire();
 		}
 	}
 }
@@ -439,9 +446,9 @@ void AExamCharacter::StopFire()
 	if (AttributeSet->bWantsToFire)
 	{
 		AttributeSet->bWantsToFire = false;
-		if (AttributeSet->CurrentWeapon)
+		if (CurrentWeapon)
 		{
-			AttributeSet->CurrentWeapon->StopFire();
+			CurrentWeapon->StopFire();
 		}
 	}
 }
@@ -472,9 +479,9 @@ void AExamCharacter::StopWeaponFire()
 	if (AttributeSet->bWantsToFire)
 	{
 		AttributeSet->bWantsToFire = false;
-		if (AttributeSet->CurrentWeapon)
+		if (CurrentWeapon)
 		{
-			AttributeSet->CurrentWeapon->StopFire();
+			CurrentWeapon->StopFire();
 		}
 	}
 }
@@ -503,9 +510,9 @@ UStaticMeshComponent* UCarryObjectComponent::GetCarriedMeshComp()
 bool AExamCharacter::WeaponSlotAvailable(EInventorySlot CheckSlot)
 {
 	/* Iterate all weapons to see if requested slot is occupied */
-	for (int32 i = 0; i < AttributeSet->Inventory.Num(); i++)
+	for (int32 i = 0; i < Inventory.Num(); i++)
 	{
-		AExamWeapon* Weapon = AttributeSet->Inventory[i];
+		AExamWeapon* Weapon = Inventory[i];
 		if (Weapon)
 		{
 			if (Weapon->GetStorageSlot() == CheckSlot)
@@ -519,7 +526,19 @@ bool AExamCharacter::WeaponSlotAvailable(EInventorySlot CheckSlot)
 
 FName AExamCharacter::GetInventoryAttachPoint(EInventorySlot Slot) const
 {
-	return AttributeSet->GetInventoryAttachPoint(Slot);
+	/* Return the socket name for the specified storage slot */
+	switch (Slot)
+	{
+	case EInventorySlot::Hands:
+		return WeaponAttachPoint;
+	case EInventorySlot::Primary:
+		return SpineAttachPoint;
+	case EInventorySlot::Secondary:
+		return PelvisAttachPoint;
+	default:
+		// Not implemented.
+		return "";
+	}
 }
 
 void AExamCharacter::RestoreCondition(float HealthRestored, float HungerRestored)
@@ -531,4 +550,74 @@ void AExamCharacter::RestoreCondition(float HealthRestored, float HungerRestored
 	{
 		//PC->ClientHUDMessage(EHUDMessage::Character_EnergyRestored);
 	}
+}
+
+
+void AExamCharacter::SetCurrentWeapon(class AExamWeapon* NewWeapon, class AExamWeapon* LastWeapon)
+{
+	/* Maintain a reference for visual weapon swapping */
+	PreviousWeapon = LastWeapon;
+
+	AExamWeapon* LocalLastWeapon = nullptr;
+	if (LastWeapon)
+	{
+		LocalLastWeapon = LastWeapon;
+	}
+	else if (NewWeapon != CurrentWeapon)
+	{
+		LocalLastWeapon = CurrentWeapon;
+	}
+
+	// UnEquip the current
+	bool bHasPreviousWeapon = false;
+	if (LocalLastWeapon)
+	{
+		LocalLastWeapon->OnUnEquip();
+		bHasPreviousWeapon = true;
+	}
+
+	CurrentWeapon = NewWeapon;
+
+	if (NewWeapon)
+	{
+		NewWeapon->SetOwningPawn(this);
+		NewWeapon->OnEquip(bHasPreviousWeapon);
+	}
+
+	/* NOTE: If you don't have an equip animation w/ animnotify to swap the meshes halfway through, then uncomment this to immediately swap instead */
+	//SwapToNewWeaponMesh();
+}
+
+
+void AExamCharacter::RemoveWeapon(class AExamWeapon* Weapon, bool bDestroy)
+{
+	if (CurrentWeapon)
+	{
+		bool bIsCurrent = true;
+
+		if (Inventory.Contains(CurrentWeapon))
+		{
+			CurrentWeapon->OnLeaveInventory();
+		}
+		Inventory.RemoveSingle(CurrentWeapon);
+
+		/* Replace weapon if we removed our current weapon */
+		if (bIsCurrent && Inventory.Num() > 0)
+		{
+			SetCurrentWeapon(Inventory[0]);
+		}
+
+		/* Clear reference to weapon if we have no items left in inventory */
+		if (Inventory.Num() == 0)
+		{
+			SetCurrentWeapon(nullptr);
+			bDestroy = false;
+		}
+
+		if (bDestroy)
+		{
+			CurrentWeapon->Destroy();
+		}
+	}
+
 }

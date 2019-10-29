@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-
+#include "../Public/ExamAttributeSet.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -19,6 +19,8 @@ ABaseCharacter::ABaseCharacter()
 	/* Noise emitter for both players and enemies. This keeps track of MakeNoise data and is used by the pawnsensing component in our SZombieCharacter class */
 	NoiseEmitterComp = CreateDefaultSubobject<UPawnNoiseEmitterComponent>(TEXT("NoiseEmitterComp"));
 
+	//AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
+	AttributeSet = NewObject< UExamAttributeSet >();
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
