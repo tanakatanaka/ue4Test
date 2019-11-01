@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "ZombieAIController.h"
+#include "../public/EPlayerState.h"
 
 #include "../Exam.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -40,6 +41,8 @@ AZombieCharacter::AZombieCharacter()
 	{
 		AttributeSet = NewObject< UExamAttributeSet >();
 	}
+
+	AttributeSet->Health = 3;
 }
 
 void AZombieCharacter::BeginPlay()
@@ -156,18 +159,18 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 
 	if (HitActor && HitActor != this && IsAlive())
 	{
-		AExamCharacter* OtherPawn = Cast<AExamCharacter>(HitActor);
+		ACharacter* OtherPawn = Cast<ACharacter>(HitActor);
 		if (OtherPawn)
 		{
-			//APlayerState* MyPS = Cast<APlayerState>(GetPlayerState());
-			//APlayerState* OtherPS = Cast<APlayerState>(OtherPawn->GetPlayerState());
+			AEPlayerState* MyPS = Cast<AEPlayerState>(GetPlayerState());
+			AEPlayerState* OtherPS = Cast<AEPlayerState>(OtherPawn->GetPlayerState());
 
-			//if (MyPS && OtherPS)
+			if (MyPS && OtherPS)
 			{
-				//if (MyPS->GetTeamNumber() == OtherPS->GetTeamNumber())
+				if (MyPS->GetTeamNumber() == OtherPS->GetTeamNumber())
 				{
 					/* Do not attack other zombies. */
-					//return;
+					return;
 				}
 
 				/* Set to prevent a zombie to attack multiple times in a very short time */

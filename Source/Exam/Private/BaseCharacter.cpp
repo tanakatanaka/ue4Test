@@ -9,6 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "../Public/ExamAttributeSet.h"
+#include "ExamDamageType.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -93,8 +95,8 @@ float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damage
 			/* Check the damagetype, always allow dying if the cast fails, otherwise check the property if player can die from damagetype */
 			if (DamageEvent.DamageTypeClass)
 			{
-				//UEDamageType* DmgType = Cast<USDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject());
-				//bCanDie = (DmgType == nullptr || (DmgType && DmgType->GetCanDieFrom()));
+				UExamDamageType* DmgType = Cast<UExamDamageType>(DamageEvent.DamageTypeClass->GetDefaultObject());
+				bCanDie = (DmgType == nullptr || (DmgType && DmgType->GetCanDieFrom()));
 			}
 
 			if (bCanDie)
@@ -141,8 +143,6 @@ void ABaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEven
 	TearOff();
 	bIsDying = true;
 
-#if 0
-	/*
 	PlayHit(KillingDamage, DamageEvent, PawnInstigator, DamageCauser, true);
 
 	DetachFromControllerPendingDestroy();
@@ -177,7 +177,7 @@ void ABaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEven
 			Mesh3P->AddRadialImpulse(RadialDmg.Origin, RadialDmg.Params.GetMaxRadius(), 100000 /*RadialDmg.DamageTypeClass->DamageImpulse*/, ERadialImpulseFalloff::RIF_Linear);
 		}
 	}
-#endif
+
 }
 
 void ABaseCharacter::FellOutOfWorld(const class UDamageType& DmgType)
@@ -260,7 +260,7 @@ void ABaseCharacter::PlayHit(float DamageTaken, struct FDamageEvent const& Damag
 
 	if (GetNetMode() != NM_DedicatedServer)
 	{
-		if (bKilled && SoundDeath)
+		if (bKilled)
 		{
 			UGameplayStatics::SpawnSoundAttached(SoundDeath, RootComponent, NAME_None, FVector::ZeroVector, EAttachLocation::SnapToTarget, true);
 		}

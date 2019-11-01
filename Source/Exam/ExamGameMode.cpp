@@ -8,6 +8,7 @@
 #include "public/ExamWeapon.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "NavigationSystem.h"
+#include "../Public/EPlayerState.h"
 #include "GameFramework/Actor.h"
 
 AExamGameMode::AExamGameMode()
@@ -31,11 +32,11 @@ float AExamGameMode::ModifyDamage(float Damage, AActor* DamagedActor, struct FDa
 	if (DamagedPawn && EventInstigator)
 	{
 		
-		//APlayerState* DamagedPlayerState = Cast<ASPlayerState>(DamagedPawn->GetPlayerState());
-		//ASPlayerState* InstigatorPlayerState = Cast<ASPlayerState>(EventInstigator->PlayerState);
+		AEPlayerState* DamagedPlayerState = Cast<AEPlayerState>(DamagedPawn->GetPlayerState());
+		AEPlayerState* InstigatorPlayerState = Cast<AEPlayerState>(EventInstigator->PlayerState);
 
 		// Check for friendly fire
-		//if (!CanDealDamage(InstigatorPlayerState, DamagedPlayerState))
+		if (!CanDealDamage(InstigatorPlayerState, DamagedPlayerState))
 		{
 			ActualDamage = 0.f;
 		}
@@ -43,7 +44,6 @@ float AExamGameMode::ModifyDamage(float Damage, AActor* DamagedActor, struct FDa
 
 	return ActualDamage;
 }
-
 
 void AExamGameMode::RestartPlayer(class AController* NewPlayer)
 {
@@ -149,6 +149,24 @@ void AExamGameMode::SpawnDefaultInventory(APawn* PlayerPawn)
 			}
 		}
 	}
+}
+
+bool AExamGameMode::CanDealDamage(class AEPlayerState* DamageCauser, class AEPlayerState* DamagedPlayer) const
+{
+	if (bAllowFriendlyFireDamage)
+	{
+		return true;
+	}
+
+	/* Allow damage to self */
+	if (DamagedPlayer == DamageCauser)
+	{
+		return true;
+	}
+
+
+	// Compare Team Numbers
+	return DamageCauser && DamagedPlayer && (DamageCauser->GetTeamNumber() != DamagedPlayer->GetTeamNumber());
 }
 
 void AExamGameMode::Killed(AController* Killer, AController* VictimPlayer, APawn* VictimPawn, const UDamageType* DamageType)

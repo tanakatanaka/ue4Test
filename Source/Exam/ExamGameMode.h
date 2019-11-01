@@ -22,12 +22,15 @@ public:
 
 	virtual float ModifyDamage(float Damage, AActor* DamagedActor, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) const;
 	virtual void Killed(AController* Killer, AController* VictimPlayer, APawn* VictimPawn, const UDamageType* DamageType);
-
+	virtual bool CanDealDamage(class AEPlayerState* DamageCauser, class AEPlayerState* DamagedPlayer) const;
 protected:
 	virtual void RestartPlayer(class AController* NewPlayer) override;
 	virtual void SetPlayerDefaults(APawn* PlayerPawn) override;
 	virtual void SpawnDefaultInventory(APawn* PlayerPawn);
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Rules")
+	bool bAllowFriendlyFireDamage;
+
 private:
 	/* Spawn at team player if any are alive */
 	UPROPERTY(EditDefaultsOnly, Category = "Rules")
