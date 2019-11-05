@@ -119,8 +119,8 @@ public:
 	void AddWeapon(class AExamWeapon* Weapon);
 
 	bool CanFire() const;
-	bool CanReload() const;
-	bool IsAlive() const;
+	bool CanReload();
+	bool IsAlive();
 
 	void OnStartFire();
 	void OnStopFire();

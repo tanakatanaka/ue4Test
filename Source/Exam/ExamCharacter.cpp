@@ -463,13 +463,18 @@ void AExamCharacter::SetTargeting(bool NewTargeting)
 	}
 }
 
-bool AExamCharacter::CanReload() const
+bool AExamCharacter::CanReload()
 {
 	return IsAlive();
 }
 
-bool AExamCharacter::IsAlive() const
+bool AExamCharacter::IsAlive()
 {
+	if (!AttributeSet)
+	{
+		AttributeSet = NewObject< UExamAttributeSet >();
+	}
+
 	return AttributeSet->Health > 0;
 }
 

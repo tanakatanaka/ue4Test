@@ -6,6 +6,12 @@
 
 void UExamBPFunctionLibrary::StopLoadingScreen()
 {
-	//IActionRPGLoadingScreenModule& LoadingScreenModule = IActionRPGLoadingScreenModule::Get();
-	//LoadingScreenModule.StopInGameLoadingScreen();
+	IExamLoadingScreenModule& LoadingScreenModule = IExamLoadingScreenModule::Get();
+	LoadingScreenModule.StopInGameLoadingScreen();
+}
+
+void UExamBPFunctionLibrary::PlayLoadingScreen(bool bPlayUntilStopped, float PlayTime)
+{
+	IExamLoadingScreenModule& LoadingScreenModule = IExamLoadingScreenModule::Get();
+	LoadingScreenModule.StartInGameLoadingScreen(bPlayUntilStopped, PlayTime);
 }
