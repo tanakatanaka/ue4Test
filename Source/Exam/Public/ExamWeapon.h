@@ -36,6 +36,9 @@ public:
 	virtual void OnEnterInventory(AExamCharacter* NewOwner);
 	virtual void OnLeaveInventory();
 
+	virtual void StartReload(bool bFromReplication = false);
+	//virtual void StopSimulateReload();
+
 	void StartFire();
 	void StopFire();
 	void SetOwningPawn(AExamCharacter* NewOwner);
@@ -138,6 +141,8 @@ protected:
 
 	virtual void ReloadWeapon();
 
+	virtual void StopSimulateReload();
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
@@ -193,8 +198,5 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float ShotsPerMinute;
-
-	virtual void StartReload(bool bFromReplication = false);
-	virtual void StopSimulateReload();
 
 };

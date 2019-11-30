@@ -44,6 +44,40 @@ AExamWeapon::AExamWeapon(const class FObjectInitializer& PCIP)
 	NoEquipAnimDuration = 0.5f;
 }
 
+void AExamWeapon::StartReload(bool bFromReplication)
+{
+	/* Push the request to server */
+	if (!bFromReplication && Role < ROLE_Authority)
+	{
+		//ServerStartReload();
+	}
+
+	/* If local execute requested or we are running on the server */
+	if (bFromReplication || CanReload())
+	{
+		bPendingReload = true;
+		DetermineWeaponState();
+
+		float AnimDuration = PlayWeaponAnimation(ReloadAnim);
+		if (AnimDuration <= 0.0f)
+		{
+			AnimDuration = NoAnimReloadDuration;
+		}
+
+		GetWorldTimerManager().SetTimer(TimerHandle_StopReload, this, &AExamWeapon::StopSimulateReload, AnimDuration, false);
+		if (Role == ROLE_Authority)
+		{
+			GetWorldTimerManager().SetTimer(TimerHandle_ReloadWeapon, this, &AExamWeapon::ReloadWeapon, FMath::Max(0.1f, AnimDuration - 0.1f), false);
+		}
+
+		if (MyPawn && MyPawn->IsLocallyControlled())
+		{
+			PlayWeaponSound(ReloadSound);
+		}
+	}
+}
+
+
 void AExamWeapon::StartFire()
 {
 	if (!bWantsToFire)
@@ -144,6 +178,16 @@ void AExamWeapon::OnUnEquip()
 	}
 
 	DetermineWeaponState();
+}
+
+void AExamWeapon::StopSimulateReload()
+{
+	if (CurrentState == EWeaponState::Reloading)
+	{
+		bPendingReload = false;
+		DetermineWeaponState();
+		StopWeaponAnimation(ReloadAnim);
+	}
 }
 
 void AExamWeapon::ReloadWeapon()
@@ -272,16 +316,6 @@ void AExamWeapon::OnRep_Reload()
 	else
 	{
 		StopSimulateReload();
-	}
-}
-
-void AExamWeapon::StopSimulateReload()
-{
-	if (CurrentState == EWeaponState::Reloading)
-	{
-		bPendingReload = false;
-		DetermineWeaponState();
-		StopWeaponAnimation(ReloadAnim);
 	}
 }
 
@@ -479,40 +513,6 @@ void AExamWeapon::StopSimulatingWeaponFire()
 	{
 		StopWeaponAnimation(FireAnim);
 		bPlayingFireAnim = false;
-	}
-}
-
-void AExamWeapon::StartReload(bool bFromReplication)
-{
-	/* Push the request to server */
-	if (!bFromReplication && Role < ROLE_Authority)
-	{
-		//ServerStartReload();
-	}
-
-	/* If local execute requested or we are running on the server */
-	if (bFromReplication || CanReload())
-	{
-		bPendingReload = true;
-		DetermineWeaponState();
-
-		float AnimDuration = PlayWeaponAnimation(ReloadAnim);
-		
-		if (AnimDuration <= 0.0f)
-		{
-			AnimDuration = NoAnimReloadDuration;
-		}
-
-		GetWorldTimerManager().SetTimer(TimerHandle_StopReload, this, &AExamWeapon::StopSimulateReload, AnimDuration, false);
-		if (Role == ROLE_Authority)
-		{
-			GetWorldTimerManager().SetTimer(TimerHandle_ReloadWeapon, this, &AExamWeapon::ReloadWeapon, FMath::Max(0.1f, AnimDuration - 0.1f), false);
-		}
-
-		if (MyPawn && MyPawn->IsLocallyControlled())
-		{
-			PlayWeaponSound(ReloadSound);
-		}
 	}
 }
 

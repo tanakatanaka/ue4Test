@@ -104,6 +104,9 @@ void AExamCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AExamCharacter::OnStartFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AExamCharacter::OnStopFire);
 
+	// Reload
+	PlayerInputComponent->BindAction("Reload", IE_Released, this, &AExamCharacter::OnReload);
+
 
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &AExamCharacter::TouchStarted);
@@ -390,6 +393,13 @@ void AExamCharacter::OnEndTargeting()
 	SetTargeting(false);
 }
 
+void AExamCharacter::OnReload()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StartReload();
+	}
+}
 
 
 void AExamCharacter::OnStartFire()

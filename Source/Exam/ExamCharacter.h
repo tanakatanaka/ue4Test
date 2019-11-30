@@ -122,6 +122,7 @@ public:
 	bool CanReload();
 	bool IsAlive();
 
+	void OnReload();
 	void OnStartFire();
 	void OnStopFire();
 	void StartFire();
