@@ -47,6 +47,23 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Hunger")
 	float MaxHunger;
 
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
+	float IncrementHungerInterval;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
+	float IncrementHungerAmount;
+
+	/* Limit when player suffers Hitpoints from extreme hunger */
+	UPROPERTY(BlueprintReadOnly, Category = "PlayerCondition")
+	float CriticalHungerThreshold;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
+	float HungerDamagePerInterval;
+
+	/* Damage type applied when player suffers critical hunger */
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
+	TSubclassOf<UDamageType> HungerDamageType;
+
 	void AdjustAttributeForMaxChange();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

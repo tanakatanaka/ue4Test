@@ -31,6 +31,18 @@ public:
 	float GetHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+	float GetMaxHunger() const;
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+	float GetHunger() const;
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+	float GetHungerThreshold() const;
+
+	/* Increments hunger, used by timer. */
+	void IncrementHunger();
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	bool IsAlive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

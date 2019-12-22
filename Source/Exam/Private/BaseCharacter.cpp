@@ -41,6 +41,23 @@ float ABaseCharacter::GetMaxHealth() const
 	return AttributeSet->MaxHealth;
 }
 
+float ABaseCharacter::GetHunger() const
+{
+	return AttributeSet->Hunger;
+}
+
+float ABaseCharacter::GetHungerThreshold() const
+{
+	return AttributeSet->CriticalHungerThreshold;
+}
+
+
+float ABaseCharacter::GetMaxHunger() const
+{
+	return AttributeSet->MaxHunger;
+}
+
+
 bool ABaseCharacter::IsAlive() const
 {
 	return AttributeSet->Health > 0;
@@ -119,6 +136,21 @@ float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damage
 
 	return ActualDamage;
 }
+
+void ABaseCharacter::IncrementHunger()
+{
+	AttributeSet->Hunger = FMath::Clamp(AttributeSet->Hunger + AttributeSet->IncrementHungerAmount, 0.0f, GetMaxHunger());
+
+	if (AttributeSet->Hunger > AttributeSet->CriticalHungerThreshold)
+	{
+		FDamageEvent DmgEvent;
+		DmgEvent.DamageTypeClass = AttributeSet->HungerDamageType;
+
+		// Apply damage to self.
+		TakeDamage(AttributeSet->HungerDamagePerInterval, DmgEvent, GetController(), this);
+	}
+}
+
 
 bool ABaseCharacter::CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const
 {
