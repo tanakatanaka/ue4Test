@@ -63,7 +63,7 @@ AExamCharacter::AExamCharacter()
 	PelvisAttachPoint = TEXT("PelvisSocket");
 	SpineAttachPoint = TEXT("SpineSocket");
 
-	if (!AttributeSet)
+	//if (!AttributeSet)
 	{
 		AttributeSet = NewObject< UExamAttributeSet >();
 	}
@@ -441,6 +441,11 @@ void AExamCharacter::OnStopFire()
 
 void AExamCharacter::StartFire()
 {
+	if (!AttributeSet)
+	{
+		AttributeSet = NewObject< UExamAttributeSet >();
+	}
+
 	if (false == AttributeSet->bWantsToFire)
 	{
 		AttributeSet->bWantsToFire = true;
@@ -453,6 +458,12 @@ void AExamCharacter::StartFire()
 
 void AExamCharacter::StopFire()
 {
+	if (!AttributeSet)
+	{
+		AttributeSet = NewObject< UExamAttributeSet >();
+	}
+
+
 	if (AttributeSet->bWantsToFire)
 	{
 		AttributeSet->bWantsToFire = false;
