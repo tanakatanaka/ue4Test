@@ -26,10 +26,16 @@ class AExamCharacter : public ABaseCharacter
 public:
 	AExamCharacter();
 
+	virtual void BeginPlay() override;
+
 	void EquipWeapon(AExamWeapon* Weapon);
 
 	UPROPERTY(Transient, Replicated)
 	bool bIsJumping;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
+	float IncrementHungerInterval;
+
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -96,7 +102,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/** List of attributes modified by the ability system */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
 	UExamAttributeSet* AttributeSet;
 
 	virtual void PawnClientRestart() override;

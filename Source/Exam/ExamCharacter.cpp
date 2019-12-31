@@ -12,7 +12,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../Public/WeaponPickup.h"
-
+#include "TimerManager.h"
 //////////////////////////////////////////////////////////////////////////
 // AExamCharacter
 
@@ -66,6 +66,20 @@ AExamCharacter::AExamCharacter()
 	//if (!AttributeSet)
 	{
 		AttributeSet = NewObject< UExamAttributeSet >();
+		//AttributeSet->HungerDamageType = UExamDamageType
+	}
+}
+
+
+void AExamCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (Role == ROLE_Authority)
+	{
+		// Set a timer to increment hunger every interval
+		FTimerHandle Handle;
+		GetWorldTimerManager().SetTimer(Handle, this, &AExamCharacter::IncrementHunger, IncrementHungerInterval, true);
 	}
 }
 
