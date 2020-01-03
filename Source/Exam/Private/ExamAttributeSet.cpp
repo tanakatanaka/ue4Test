@@ -12,7 +12,7 @@ UExamAttributeSet::UExamAttributeSet()
 	DefensePower = 1.f;
 	MoveSpeed = 1.f;
 	Damage = 1.f;
-	Hunger = 100.f;
+	Hunger = 0.f;
 	MaxHunger = 100.f;
 
 	bIsEquipped = false;

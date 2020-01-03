@@ -22,7 +22,8 @@ ABaseCharacter::ABaseCharacter()
 	NoiseEmitterComp = CreateDefaultSubobject<UPawnNoiseEmitterComponent>(TEXT("NoiseEmitterComp"));
 
 	//AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("AttributeSet"));
-	AttributeSet = NewObject< UExamAttributeSet >();
+	AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("/Script/Exam/ExamAttributeSet"));
+	//AttributeSet = NewObject< UExamAttributeSet >();
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

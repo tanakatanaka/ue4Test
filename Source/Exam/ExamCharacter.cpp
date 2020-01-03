@@ -69,7 +69,9 @@ AExamCharacter::AExamCharacter()
 	AttributeSet->IncrementHungerInterval = 5.0;
 	AttributeSet->IncrementHungerAmount = 5.0;
 	AttributeSet->HungerDamagePerInterval = 1.0;
+	AttributeSet->CriticalHungerThreshold = 90.0;
 	AttributeSet->HungerDamageType = m_HungerDamageTyp;
+
 
 	if (!AttributeSet)
 	{
