@@ -97,6 +97,7 @@ protected:
 	
 	bool bIsDying;
 
+	UPROPERTY(EditAnywhere, Category = "PlayerCondition")
 	UExamAttributeSet* AttributeSet;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

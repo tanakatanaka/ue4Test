@@ -63,10 +63,17 @@ AExamCharacter::AExamCharacter()
 	PelvisAttachPoint = TEXT("PelvisSocket");
 	SpineAttachPoint = TEXT("SpineSocket");
 
-	//if (!AttributeSet)
+	//m_HungerDamageTyp = CreateDefaultSubobject<UDamageType>(TEXT("DamageType"));
+
+	//AttributeSet = CreateDefaultSubobject<UExamAttributeSet>(TEXT("/Script/Exam/ExamAttributeSet"));
+	AttributeSet->IncrementHungerInterval = 5.0;
+	AttributeSet->IncrementHungerAmount = 5.0;
+	AttributeSet->HungerDamagePerInterval = 1.0;
+	AttributeSet->HungerDamageType = m_HungerDamageTyp;
+
+	if (!AttributeSet)
 	{
 		AttributeSet = NewObject< UExamAttributeSet >();
-		//AttributeSet->HungerDamageType = UExamDamageType
 	}
 }
 
@@ -79,7 +86,8 @@ void AExamCharacter::BeginPlay()
 	{
 		// Set a timer to increment hunger every interval
 		FTimerHandle Handle;
-		GetWorldTimerManager().SetTimer(Handle, this, &AExamCharacter::IncrementHunger, IncrementHungerInterval, true);
+
+		GetWorldTimerManager().SetTimer(Handle, this, &AExamCharacter::IncrementHunger, AttributeSet->IncrementHungerInterval, true);
 	}
 }
 

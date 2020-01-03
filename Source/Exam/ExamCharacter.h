@@ -33,10 +33,6 @@ public:
 	UPROPERTY(Transient, Replicated)
 	bool bIsJumping;
 
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
-	float IncrementHungerInterval;
-
-
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -100,10 +96,6 @@ protected:
 	/* Called every frame */
 	//virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	/** List of attributes modified by the ability system */
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
-	UExamAttributeSet* AttributeSet;
 
 	virtual void PawnClientRestart() override;
 
@@ -179,5 +171,9 @@ private:
 	/* Attachpoint for primary weapons */
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName SpineAttachPoint;
+
+	/* Damage type applied when player suffers critical hunger */
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerCondition")
+	TSubclassOf<UDamageType> m_HungerDamageTyp;
 };
 
