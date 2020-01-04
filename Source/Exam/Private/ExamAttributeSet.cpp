@@ -6,8 +6,8 @@
 
 UExamAttributeSet::UExamAttributeSet()
 {
-	Health = 10000.f;
-	MaxHealth = 10000.f;
+	Health = 100.f;
+	MaxHealth = 100.f;
 	AttackPower = 1.f;
 	DefensePower = 1.f;
 	MoveSpeed = 1.f;

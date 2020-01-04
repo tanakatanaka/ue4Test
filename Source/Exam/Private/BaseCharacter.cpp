@@ -131,7 +131,7 @@ float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damage
 		{
 			/* Shorthand for - if x != null pick1 else pick2 */
 			APawn* Pawn = EventInstigator ? EventInstigator->GetPawn() : nullptr;
-			//PlayHit(ActualDamage, DamageEvent, Pawn, DamageCauser, false);
+			PlayHit(ActualDamage, DamageEvent, Pawn, DamageCauser, false);
 		}
 	}
 

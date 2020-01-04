@@ -162,6 +162,7 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 		ACharacter* OtherPawn = Cast<ACharacter>(HitActor);
 		if (OtherPawn)
 		{
+#if 0
 			AEPlayerState* MyPS = Cast<AEPlayerState>(GetPlayerState());
 			AEPlayerState* OtherPS = Cast<AEPlayerState>(OtherPawn->GetPlayerState());
 
@@ -172,18 +173,18 @@ void AZombieCharacter::PerformMeleeStrike(AActor* HitActor)
 					/* Do not attack other zombies. */
 					return;
 				}
+#endif
+			/* Set to prevent a zombie to attack multiple times in a very short time */
+			LastMeleeAttackTime = GetWorld()->GetTimeSeconds();
 
-				/* Set to prevent a zombie to attack multiple times in a very short time */
-				LastMeleeAttackTime = GetWorld()->GetTimeSeconds();
+			FPointDamageEvent DmgEvent;
+			DmgEvent.DamageTypeClass = PunchDamageType;
+			DmgEvent.Damage = MeleeDamage;
 
-				FPointDamageEvent DmgEvent;
-				DmgEvent.DamageTypeClass = PunchDamageType;
-				DmgEvent.Damage = MeleeDamage;
+			HitActor->TakeDamage(DmgEvent.Damage, DmgEvent, GetController(), this);
 
-				HitActor->TakeDamage(DmgEvent.Damage, DmgEvent, GetController(), this);
-
-				//SimulateMeleeStrike();
-			}
+			//SimulateMeleeStrike();
+			
 		}
 	}
 }
