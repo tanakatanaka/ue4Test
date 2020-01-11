@@ -34,6 +34,11 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 float ABaseCharacter::GetHealth() const
 {
+	if (AttributeSet->Health < 0)
+	{
+		return 0;
+	}
+
 	return AttributeSet->Health;
 }
 
@@ -108,6 +113,7 @@ float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damage
 		AttributeSet->Health -= ActualDamage;
 		if (GetHealth() <= 0)
 		{
+			AttributeSet->Health = 0;
 			bool bCanDie = true;
 
 			/* Check the damagetype, always allow dying if the cast fails, otherwise check the property if player can die from damagetype */
